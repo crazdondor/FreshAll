@@ -7,13 +7,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.freshall.freshall.R;
-
 import com.firebase.ui.auth.AuthUI;
+import com.freshall.freshall.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -27,7 +31,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
+
+    static final String TAG = "MainActivity";
     static final int SIGN_IN_REQUEST = 1;
+
 
     String userName = "Anonymous";
     List<ChatMessage> chatMessageList;
@@ -36,9 +43,9 @@ public class LoginActivity extends AppCompatActivity {
 
     // firebase fields
     FirebaseDatabase mFirebaseDatabase;
+    // we are going to add an object called messages
     DatabaseReference mMessagesDatabaseReference;
     ChildEventListener mMessagesChildEventListener;
-
     // firebase authentication fields
     FirebaseAuth mFirebaseAuth;
     FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -48,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         listView = (ListView)
@@ -65,12 +72,15 @@ public class LoginActivity extends AppCompatActivity {
         // initialize the firebase references
         mFirebaseDatabase =
                 FirebaseDatabase.getInstance();
-        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+        mMessagesDatabaseReference =
+                mFirebaseDatabase.getReference()
+                        .child("messages");
         mMessagesChildEventListener = new ChildEventListener() {
-
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                // called for each message already in/new message added to our db
+                // let's pick up here on Friday
+                // called for each message already in our db
+                // called for each new message add to our db
                 // dataSnapshot stores the ChatMessage
                 ChatMessage chatMessage =
                         dataSnapshot.getValue(ChatMessage.class);
@@ -127,15 +137,21 @@ public class LoginActivity extends AppCompatActivity {
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                // two auth states: signed in and signed out
+                // we have two auth states, signed in and signed out
                 // get the get current user, if there is one
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    // user is signed in:
+                    // user is signed in
+                    // step 4
                     setupUserSignedIn(user);
                 } else {
-                    // user is signed out:
-                    // start an activity using FirebaseUI to log our user in
+                    // user is signed out
+                    // step 5
+                    // we need an intent
+                    // the firebaseUI Github repo README.md
+                    // we have used builders before in this class
+                    // AlertDialog.Builder
+                    // return instance to support chaining
                     mMessagesDatabaseReference.removeEventListener(mMessagesChildEventListener);
                     Intent intent = AuthUI.getInstance()
                             .createSignInIntentBuilder()
@@ -158,8 +174,10 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode == SIGN_IN_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 Toast.makeText(this, "You are now signed in", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                // user backed out of the sign in activity, so exit
+            }
+            else if (resultCode == Activity.RESULT_CANCELED) {
+                // they backed out of the sign in activity
+                // let's exit
                 finish();
             }
         }
@@ -175,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // remove the authstatelistener
+        // remove it
         mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         setupUserSignedOut();
     }
@@ -185,7 +203,8 @@ public class LoginActivity extends AppCompatActivity {
         userName = user.getDisplayName();
         // listen for database changes with childeventlistener
         // wire it up!
-        mMessagesDatabaseReference.addChildEventListener(mMessagesChildEventListener);
+        mMessagesDatabaseReference
+                .addChildEventListener(mMessagesChildEventListener);
     }
 
     private void setupUserSignedOut() {
@@ -193,5 +212,57 @@ public class LoginActivity extends AppCompatActivity {
         chatMessageList.clear();
         arrayAdapter.notifyDataSetChanged();
         mMessagesDatabaseReference.removeEventListener(mMessagesChildEventListener);
+    }
+
+
+    public void onSendButtonClick(View view) {
+        // show a log message
+        Log.d(TAG, "onSendButtonClick: ");
+        // push up to "messages" whatever is
+        // in the edittext
+        EditText editText = (EditText)
+                findViewById(R.id.editText);
+        String currText = editText.getText().toString();
+        if (currText.isEmpty()) {
+            Toast.makeText(this, "Please enter a message first", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            // we have a message to send
+            // create a ChatMessage object to push
+            // to the database
+            ChatMessage chatMessage = new
+                    ChatMessage(userName,
+                    currText);
+            mMessagesDatabaseReference
+                    .push()
+                    .setValue(chatMessage);
+            // warmup task #1
+            editText.setText("");
+
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        } else if (id == R.id.action_signout) {
+            AuthUI.getInstance().signOut(this);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

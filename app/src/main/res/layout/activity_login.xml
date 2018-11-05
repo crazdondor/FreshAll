@@ -32,7 +32,8 @@
         android:layout_height="57dp"
         android:layout_marginStart="100dp"
         android:layout_marginTop="250dp"
-        android:text="@string/login_button" />
+        android:text="@string/login_button"
+        android:onClick="letIn"/>
 
     <Button
         android:id="@+id/register_button"

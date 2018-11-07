@@ -18,7 +18,10 @@
         </activity>
         <activity
             android:name=".FeedActivity"
-            android:label="@string/title_activity_feed"></activity>
+            android:label="@string/title_activity_feed" />
+        <activity
+            android:name=".PostViewerActivity"
+            android:label="@string/title_activity_post_viewer"></activity>
     </application>
 
 </manifest>

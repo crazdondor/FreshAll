@@ -32,6 +32,8 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
+    // comment change
+
     static final String TAG = "MainActivity";
     static final int SIGN_IN_REQUEST = 1;
 

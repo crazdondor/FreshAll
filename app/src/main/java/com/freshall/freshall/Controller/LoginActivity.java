@@ -132,8 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                             .setIsSmartLockEnabled(false)
                             .setAvailableProviders(
                                     Arrays.asList(
-                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                                            new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
+                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
                                     )
                             ).build();
                     startActivityForResult(intent, SIGN_IN_REQUEST);

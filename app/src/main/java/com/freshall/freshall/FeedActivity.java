@@ -65,6 +65,9 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void addNewPost(View addButton) {
+
+        Intent goToNewPost = new Intent(this, CreateNewPost.class);
+        startActivity(goToNewPost);
         // currently adds same text for each item, but need to join with Kevin's New Post
         final String postTitle = "Food Item";
         Post newPost = new Post(postTitle, "This is a new food post.", "seller");
@@ -99,4 +102,7 @@ public class FeedActivity extends AppCompatActivity {
             }
         });
     }
+
+    private static final String TAG = "feed activity";
+
 }

@@ -69,9 +69,11 @@ public class FeedActivity extends AppCompatActivity {
         final String postTitle = "Food Item";
         Post newPost = new Post(postTitle, "This is a new food post.", "seller");
 
-        //create new post & add to array
+        // create new post & add to array
         postsArrayList.add(newPost);
-        // will need to make a custom array adapter probably
+
+        // create array adapter to display title and description of posts
+        // will need to make a custom array adapter probably to display photo + post descriptions
         ArrayAdapter<Post> arrayAdapter = new ArrayAdapter<Post>(this, android.R.layout.simple_list_item_2, android.R.id.text1, postsArrayList){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -84,7 +86,10 @@ public class FeedActivity extends AppCompatActivity {
                 return view;
             }
         };
+        // set array adapter
         postsListView.setAdapter(arrayAdapter);
+
+        // set list item click listener to open post viewer activity
         postsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

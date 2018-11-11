@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PostViewerActivity extends AppCompatActivity {
 
@@ -46,7 +47,8 @@ public class PostViewerActivity extends AppCompatActivity {
     }
 
 
+    // when FAB is clicked to add to favorites, shows toast
     public void addToFavorites(View view) {
-        Log.d("FAVE-FAB", "addToFavorites: button clicked");
+        Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show();
     }
 }

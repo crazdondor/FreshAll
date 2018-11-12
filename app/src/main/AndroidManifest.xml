@@ -22,7 +22,7 @@
         <activity
             android:name=".PostViewerActivity"
             android:label="@string/title_activity_post_viewer" />
-        <activity android:name=".CreateNewPost"></activity>
+        <activity android:name=".CreateNewPostActivity"></activity>
     </application>
 
 </manifest>

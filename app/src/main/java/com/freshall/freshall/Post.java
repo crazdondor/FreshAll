@@ -1,12 +1,13 @@
 package com.freshall.freshall;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by angelarae on 10/28/18.
  */
 
-public class Post {
+public class Post implements Serializable {
     String title;
     String description;
     String sellerName;
@@ -47,6 +48,15 @@ public class Post {
     public String getTitle() {
         return title;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getDescription() {
         return description;
     }

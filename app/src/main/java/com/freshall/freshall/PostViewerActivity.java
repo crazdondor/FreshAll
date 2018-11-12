@@ -1,5 +1,6 @@
 package com.freshall.freshall;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -43,6 +44,17 @@ public class PostViewerActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        // get post that was clicked to populate view
+        Intent feedIntent = getIntent();
+        Post selectedPost = (Post) feedIntent.getSerializableExtra("selectedPost");
+
+        // set title text
+        TextView titleText = (TextView) findViewById(R.id.titleText);
+        titleText.setText(selectedPost.getTitle());
+
+        // set description text
+        TextView descText = (TextView) findViewById(R.id.description);
+        descText.setText(selectedPost.getDescription());
     }
 
 

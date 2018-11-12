@@ -1,5 +1,6 @@
 package com.freshall.freshall;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,6 +32,7 @@ public class FeedActivity extends AppCompatActivity {
     public TextView noPostsMessage;
     public ListView postsListView;
     public List<Post> postsArrayList;
+    private int NEW_ITEM_REQUEST = 1;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -68,19 +71,8 @@ public class FeedActivity extends AppCompatActivity {
 ////            noPostsMessage.setVisibility(View.VISIBLE);
 //            Log.d("onCreate", "if statement works");
 //        }
+
         postsArrayList = new ArrayList<Post>();
-    }
-
-    public void addNewPost(View addButton) {
-
-        Intent goToNewPost = new Intent(this, CreateNewPost.class);
-        startActivity(goToNewPost);
-        // currently adds same text for each item, but need to join with Kevin's New Post
-        final String postTitle = "Food Item";
-        Post newPost = new Post(postTitle, "This is a new food post.", "seller");
-
-        // create new post & add to array
-        postsArrayList.add(newPost);
 
         // create array adapter to display title and description of posts
         // will need to make a custom array adapter probably to display photo + post descriptions
@@ -102,16 +94,33 @@ public class FeedActivity extends AppCompatActivity {
         // set list item click listener to open post viewer activity
         postsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d("list item", "onItemClick: clicked!");
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Intent viewPost = new Intent(getApplicationContext(), PostViewerActivity.class);
+
+                // add post that was clicked to intent, then start post viewer activity
+                Post selectedPost = (Post) adapterView.getAdapter().getItem(position);
+                viewPost.putExtra("selectedPost", selectedPost);
                 startActivity(viewPost);
             }
         });
-
-        // Write a message to the database
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference().child("posts");
-//        myRef.setValue("Hello, World!");
     }
+
+    // when user clicks FAB to add new post, start intent for CreateNewPostActivity
+    public void addNewPost(View addButton) {
+        Intent goToNewPost = new Intent(this, CreateNewPostActivity.class);
+        startActivityForResult(goToNewPost, NEW_ITEM_REQUEST);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // when CreateNewPostActivity finishes, get the new post and add to feed list
+        if (requestCode == NEW_ITEM_REQUEST && resultCode == Activity.RESULT_OK) {
+            Post result = (Post) data.getSerializableExtra("new_post");
+            postsArrayList.add(result);
+        }
+    }
+
 }

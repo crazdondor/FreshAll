@@ -10,10 +10,12 @@ import java.util.Date;
 public class Post implements Serializable {
     String title;
     String description;
+//    User seller;
     String sellerName;
     String location;
-    Integer quantity;
+    Double quantity;
     String quantityType;
+    Double pricePerQuantity;
     Date harvestDate;
     Date expirationDate;
 
@@ -23,26 +25,21 @@ public class Post implements Serializable {
         this.description = "description";
         this.sellerName = "seller_name";
         this.location = "city, province, country";
-        this.quantity = 0;
+        this.quantity = 0.0;
         this.quantityType = "each";
+        this.pricePerQuantity = 0.0;
         this.harvestDate = new Date(2000, 1, 1);
         this.expirationDate = new Date(2020, 1, 1);
     }
 
     //EVC
-    Post(String title, String description, String sellerName, String location, Integer quantity, String quantityType) {
+    Post(String title, String description, String sellerName, String location, Double quantity, String quantityType, Double pricePerQuantity, Date harvestDate, Date expirationDate) {
         this.title = title;
         this.description = description;
         this.sellerName = sellerName;
         this.location = location;
         this.quantity = quantity;
         this.quantityType = quantityType;
-    }
-
-    Post(String title, String description, String sellerName) {
-        this.title = title;
-        this.description = description;
-        this.sellerName = sellerName;
     }
 
     public String getTitle() {
@@ -60,6 +57,7 @@ public class Post implements Serializable {
     public String getDescription() {
         return description;
     }
+
     public String getSellerName() {return sellerName;}
 
     public void setSellerName(String sellerName) {
@@ -74,11 +72,12 @@ public class Post implements Serializable {
         this.location = location;
     }
 
-    public Integer getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
 
@@ -88,6 +87,14 @@ public class Post implements Serializable {
 
     public void setQuantityType(String quantityType) {
         this.quantityType = quantityType;
+    }
+
+    public Double getPricePerQuantity() {
+        return pricePerQuantity;
+    }
+
+    public void setPricePerQuantity(Double pricePerQuantity) {
+        this.pricePerQuantity = pricePerQuantity;
     }
 
     public Date getHarvestDate() {

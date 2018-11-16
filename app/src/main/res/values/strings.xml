@@ -1,15 +1,20 @@
 <resources>
-    <string name="app_name">FreshAll</string>
-    <string name="username_hint">Username</string>
-    <string name="password_hint">Password</string>
-    <string name="login_button">Login</string>
-    <string name="register_button">Register Account</string>
-    <string name="title_activity_feed">Post Feed</string>
-    <string name="title_home">Home</string>
+    <string name="app_name">Fresh All</string>
+    <string name="title_home">profile</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="no_posts">No posts available</string>
-    <string name="title_activity_post_viewer">View Post</string>
-    <string name="sample_description">This is a sample description. </string>
-    <string name="title">Post Name</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_add">Add</string>
+    <string name="nav_message">Message</string>
+    <string name="nav_user">User</string>
+    <string name="title_main">MAIN ACTIVITY</string>
+    <string name="title_second">SECONDARY ACTIVITY</string>
+    <string name="title_third">TERTIARY ACTIVITY</string>
+    <string name="prof_pic">Profile Picture</string>
+    <string name="exPost1">Ex Post 1</string>
+    <string name="exPost2">Ex Post 2</string>
+    <string name="exPost3">Ex Post 3</string>
+    <string name="exPost4">Ex Post 4</string>
+    <string name="exPost5">Ex Post 5</string>
+
 </resources>

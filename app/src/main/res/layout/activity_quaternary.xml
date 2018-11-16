@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:menu="@menu/nav_items">
+
+    </android.support.design.widget.BottomNavigationView>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:isScrollContainer="true"
+        android:verticalScrollbarPosition="defaultPosition"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView">
+
+            <ImageView
+                android:id="@+id/Image"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="259dp"
+                android:layout_marginLeft="130dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/baseline_person_black_24dp"
+                android:contentDescription="@string/prof_pic"
+                app:layout_constraintBottom_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintVertical_bias="0.062"
+                tools:layout_editor_absoluteX="8dp" />
+
+            <TextView
+                android:id="@+id/exPost1"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:text="@string/exPost1" />
+
+            <TextView
+                android:id="@+id/exPost2"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:text="@string/exPost2" />
+
+            <TextView
+                android:id="@+id/exPost3"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:text="@string/exPost3" />
+
+            <TextView
+                android:id="@+id/exPost4"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:text="@string/exPost4" />
+
+            <TextView
+                android:id="@+id/exPost5"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:text="@string/exPost5" />
+        </LinearLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>
+

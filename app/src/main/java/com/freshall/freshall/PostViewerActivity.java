@@ -57,7 +57,6 @@ public class PostViewerActivity extends AppCompatActivity {
         descText.setText(selectedPost.getDescription());
     }
 
-
     // when FAB is clicked to add to favorites, shows toast
     public void addToFavorites(View view) {
         Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show();

@@ -16,7 +16,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void letIn(View loginButton) {
-        Log.d(TAG, "letIn: IN!");
         Intent startFeed = new Intent(this, FeedActivity.class);
         startActivity(startFeed);
     }

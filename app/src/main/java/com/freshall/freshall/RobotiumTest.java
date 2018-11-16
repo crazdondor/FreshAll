@@ -1,6 +1,6 @@
 //package com.freshall.freshall;
 //
-//import com.freshall.freshall.Controller.LoginActivity;
+//import com.freshall.freshall.Controller.FeedActivity;
 //import com.robotium.solo.Solo;
 //
 //import android.support.test.InstrumentationRegistry;
@@ -22,7 +22,7 @@
 //
 //    @Rule
 //    public ActivityTestRule<NotesList> activityTestRule =
-//            new ActivityTestRule<>(LoginActivity.class);
+//            new ActivityTestRule<>(FeedActivity.class);
 //
 //    private Solo solo;
 //

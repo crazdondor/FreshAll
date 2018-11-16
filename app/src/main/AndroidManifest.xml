@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="zagmail.gonzaga.edu.freshall10">
+    package="zagmail.gonzaga.edu.freshall">
 
     <application
         android:allowBackup="true"
@@ -18,9 +18,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SecondaryActivity"></activity>
-        <activity android:name=".TertiaryActivity"></activity>
-        <activity android:name=".QuaternaryActivity"></activity>
+        <activity
+            android:name=".SecondaryActivity"
+            android:label="Fresh All">
+            <intent-filter>
+                <action android:name="android.intent.action.SECOND" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".TertiaryActivity"
+            android:label="Fresh All">
+            <intent-filter>
+                <action android:name="android.intent.action.TERTIARY" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".FourthActivity"
+            android:label="Fresh All">
+            <intent-filter>
+                <action android:name="android.intent.action.FOURTH" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

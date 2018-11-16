@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "735292629463",
+    "firebase_url": "https://freshall-5c50e.firebaseio.com",
+    "project_id": "freshall-5c50e",
+    "storage_bucket": "freshall-5c50e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735292629463:android:f9df3b079477afbc",
+        "android_client_info": {
+          "package_name": "com.freshall.freshall"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "735292629463-32a0745gac7lql1n027fa1cnknpjk448.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.freshall.freshall",
+            "certificate_hash": "6d192a9564d437f4e4e974ab37594013d2265403"
+          }
+        },
+        {
+          "client_id": "735292629463-7hkca1u6igonbj72i7icfbttplogdgkr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlFIi7DJMgoWaQzYLRZJwiK5rwZ5d2TWc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735292629463-7hkca1u6igonbj72i7icfbttplogdgkr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,21 +31,27 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
-    static final String TAG = "MainActivity";
     static final int SIGN_IN_REQUEST = 1;
-
 
     String userName = "Anonymous";
     List<ChatMessage> chatMessageList;
     ArrayAdapter<ChatMessage> arrayAdapter;
     ListView listView;
 
-    // firebase fields
     FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mMessagesDatabaseReference;
     ChildEventListener mMessagesChildEventListener;
     FirebaseAuth mFirebaseAuth;
     FirebaseAuth.AuthStateListener mAuthStateListener;
+
+    // server side setup
+    // 1. enable google authentication provider
+    // 2. return the default values for db read/write
+    // 3. declare a FirebaseAuth.AuthStateListener
+    // 4. get username on sign in
+    // 5. if the user is not signed in, start sign in activity with google
+    // 6. wire up the AuthStateListener in onResume(), detach in onPause()
+    // 7. add support for the user logging out
 
 
     @Override
@@ -106,16 +111,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-
-        // server side setup
-        // 1. enable google authentication provider
-        // 2. return the default values for db read/write
-        // 3. declare a FirebaseAuth.AuthStateListener
-        // 4. get username on sign in
-        // 5. if the user is not signed in, start sign in activity with google
-        // 6. wire up the AuthStateListener in onResume(), detach in onPause()
-        // 7. add support for the user logging out
-
         mFirebaseAuth = FirebaseAuth.getInstance();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -157,22 +152,19 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        super.onResume();
-        // attach the authstatelistener
+        super.onResume(); // attach the authstatelistener
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
-        // remove the authstatelistener
+        super.onPause(); // remove the authstatelistener
         mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         setupUserSignedOut();
     }
 
     private void setupUserSignedIn(FirebaseUser user) {
-        // get the user's name
-        userName = user.getDisplayName();
+        userName = user.getDisplayName(); // get the user's name
         mMessagesDatabaseReference
                 .addChildEventListener(mMessagesChildEventListener);
     }
@@ -186,7 +178,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
     public void onSendButtonClick(View view) {
-        // push text up to "messages"
         EditText editText = (EditText)
                 findViewById(R.id.editText);
         String currText = editText.getText().toString();
@@ -218,7 +209,6 @@ public class LoginActivity extends AppCompatActivity {
         } else if (id == R.id.action_signout) {
             AuthUI.getInstance().signOut(this);
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

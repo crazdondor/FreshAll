@@ -25,7 +25,7 @@ import java.util.List;
 //import com.google.firebase.database.DataSnapshot;
 //import com.google.firebase.database.DatabaseError;
 //import com.google.firebase.database.DatabaseReference;
-
+//
 public class FeedActivity extends AppCompatActivity {
 
     private TextView mTextMessage;

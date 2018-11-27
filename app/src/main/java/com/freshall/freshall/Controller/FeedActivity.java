@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -88,6 +89,7 @@ public class FeedActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
@@ -105,6 +107,7 @@ public class FeedActivity extends AppCompatActivity {
 
         // create array adapter to display title and description of posts
         // will need to make a custom array adapter probably to display photo + post descriptions
+
         arrayAdapter = new ArrayAdapter<Post>(this, android.R.layout.simple_list_item_2, android.R.id.text1, postsArrayList){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -117,6 +120,7 @@ public class FeedActivity extends AppCompatActivity {
                 return view;
             }
         };
+
         // set array adapter
         postsListView.setAdapter(arrayAdapter);
 
@@ -136,10 +140,6 @@ public class FeedActivity extends AppCompatActivity {
         // initialize the firebase references
         mFirebaseDatabase =
                 FirebaseDatabase.getInstance();
-        //TODO wire this for posts, not messages
-//        mMessagesDatabaseReference =
-//                mFirebaseDatabase.getReference()
-//                        .child("messages");
 
         mPostDatabaseReference =
                 mFirebaseDatabase.getReference()
@@ -227,7 +227,7 @@ public class FeedActivity extends AppCompatActivity {
         // when CreateNewPostActivity finishes, get the new post and add to feed list
         if (requestCode == NEW_ITEM_REQUEST && resultCode == Activity.RESULT_OK) {
             Post result = (Post) data.getSerializableExtra("new_post");
-            postsArrayList.add(result);
+            mPostDatabaseReference.push().setValue(result);
         }
     }
 

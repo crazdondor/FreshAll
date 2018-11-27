@@ -124,6 +124,7 @@ public class FeedActivity extends AppCompatActivity {
         // set array adapter
         postsListView.setAdapter(arrayAdapter);
 
+        // TODO find out why we can't view items clicked
         // set list item click listener to open post viewer activity
         postsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

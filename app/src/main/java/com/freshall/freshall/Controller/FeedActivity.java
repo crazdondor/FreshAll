@@ -9,12 +9,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,20 +41,19 @@ public class FeedActivity extends AppCompatActivity {
     static final int SIGN_IN_REQUEST = 1;
     static final int NEW_ITEM_REQUEST = 2;
 
-    String userName = "Anonymous";
-    ListView listView;
+    public String userName = "Anonymous";
 
-    FirebaseDatabase mFirebaseDatabase;
-    DatabaseReference mPostDatabaseReference;
-    ChildEventListener mPostChildEventListener;
-    FirebaseAuth mFirebaseAuth;
-    FirebaseAuth.AuthStateListener mAuthStateListener;
+    public FirebaseDatabase mFirebaseDatabase;
+    public DatabaseReference mPostDatabaseReference;
+    public ChildEventListener mPostChildEventListener;
+    public FirebaseAuth mFirebaseAuth;
+    public FirebaseAuth.AuthStateListener mAuthStateListener;
 
     private TextView mTextMessage;
     public TextView noPostsMessage;
     public ListView postsListView;
     public List<Post> postsArrayList;
-    ArrayAdapter<Post> arrayAdapter;
+    public ArrayAdapter<Post> arrayAdapter;
 
     // server side setup
     // 1. enable google authentication provider
@@ -73,13 +72,16 @@ public class FeedActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
+                    Log.i("navigation", "home button press");
+//                    mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
+                    Log.i("navigation", "dashboard button press");
+//                    mTextMessage.setText(R.string.title_dashboard);
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                    Log.i("navigation", "notifications button press");
+//                    mTextMessage.setText(R.string.title_notifications);
                     return true;
             }
             return false;
@@ -129,6 +131,7 @@ public class FeedActivity extends AppCompatActivity {
         postsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Log.i("listview", "listview item clicked");
                 Intent viewPost = new Intent(getApplicationContext(), PostViewerActivity.class);
 
                 // add post that was clicked to intent, then start post viewer activity
@@ -144,7 +147,7 @@ public class FeedActivity extends AppCompatActivity {
 
         mPostDatabaseReference =
                 mFirebaseDatabase.getReference()
-                    .child("posts");
+                        .child("posts");
 
         mPostChildEventListener = new ChildEventListener() {
             @Override
@@ -155,7 +158,6 @@ public class FeedActivity extends AppCompatActivity {
                 // add it to the list, notify adapter
                 postsArrayList.add(post);
                 arrayAdapter.notifyDataSetChanged();
-
             }
 
             @Override

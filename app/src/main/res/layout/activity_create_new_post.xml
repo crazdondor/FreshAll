@@ -44,7 +44,7 @@
 
             <ImageView
                 android:id="@+id/postPhoto"
-                android:layout_width="139dp"
+                android:layout_width="match_parent"
                 android:layout_height="160dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"

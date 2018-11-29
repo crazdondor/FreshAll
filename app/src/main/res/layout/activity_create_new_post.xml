@@ -143,6 +143,7 @@
         android:layout_height="50dp"
         android:layout_marginBottom="5dp"
         android:layout_marginEnd="5dp"
+        android:onClick="cancelPost"
         android:text="Cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

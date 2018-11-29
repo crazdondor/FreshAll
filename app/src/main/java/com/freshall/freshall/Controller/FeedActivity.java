@@ -229,8 +229,10 @@ public class FeedActivity extends AppCompatActivity {
 
         // when CreateNewPostActivity finishes, get the new post and add to feed list
         if (requestCode == NEW_ITEM_REQUEST && resultCode == Activity.RESULT_OK) {
-            Post result = (Post) data.getSerializableExtra("new_post");
-            mPostDatabaseReference.push().setValue(result);
+            if (data != null) {
+                Post result = (Post) data.getSerializableExtra("new_post");
+                mPostDatabaseReference.push().setValue(result);
+            }
         }
     }
 

@@ -26,6 +26,12 @@ public class CreateNewPostActivity extends AppCompatActivity {
         quantityTypeSpinner.setAdapter(adapter);
     }
 
+    // when cancel button is clicked, finish activity without saving data
+    public void cancelPost(View view) {
+        setResult(RESULT_OK, null);
+        finish();
+    }
+
     // when confirm button is clicked, create new post object with entered fields
     public void createPost(View view) {
         Post newPost = new Post();

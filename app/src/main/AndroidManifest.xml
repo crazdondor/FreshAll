@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Controller.CreateNewPostActivity" />
-        <activity android:name=".Controller.PostViewerActivity"></activity>
+        <activity android:name=".Controller.PostViewerActivity" />
+        <activity android:name=".Controller.ProfileActivity"></activity>
     </application>
 
 </manifest>

@@ -41,7 +41,7 @@ public class FeedActivity extends AppCompatActivity {
     static final int SIGN_IN_REQUEST = 1;
     static final int NEW_ITEM_REQUEST = 2;
 
-    public String userName = "Anonymous";
+    public String userName;
 
     public FirebaseDatabase mFirebaseDatabase;
     public DatabaseReference mPostDatabaseReference;
@@ -49,7 +49,6 @@ public class FeedActivity extends AppCompatActivity {
     public FirebaseAuth mFirebaseAuth;
     public FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    private TextView mTextMessage;
     public TextView noPostsMessage;
     public ListView postsListView;
     public List<Post> postsArrayList;
@@ -71,18 +70,20 @@ public class FeedActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
+                case R.id.nav_home:
                     Log.i("navigation", "home button press");
 //                    mTextMessage.setText(R.string.title_home);
-                    return true;
-                case R.id.navigation_dashboard:
-                    Log.i("navigation", "dashboard button press");
-//                    mTextMessage.setText(R.string.title_dashboard);
-                    return true;
-                case R.id.navigation_notifications:
-                    Log.i("navigation", "notifications button press");
+                    break;
+                case R.id.nav_message:
+                    Log.i("navigation", "message button press");
 //                    mTextMessage.setText(R.string.title_notifications);
-                    return true;
+                    break;
+                case R.id.nav_user:
+                    Log.i("navigation", "user button press");
+                    Intent profileIntent = new Intent(FeedActivity.this, ProfileActivity.class);
+                    profileIntent.putExtra("username", userName);
+                    startActivity(profileIntent);
+                    break;
             }
             return false;
         }
@@ -98,9 +99,11 @@ public class FeedActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation_bar);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        Menu menu = navigation.getMenu();
+        MenuItem menuItem = menu.getItem(0);
+        menuItem.setChecked(true);
 
         postsListView = (ListView) findViewById(R.id.postsList);
         noPostsMessage = (TextView) findViewById(R.id.noPostsText);
@@ -126,7 +129,6 @@ public class FeedActivity extends AppCompatActivity {
         // set array adapter
         postsListView.setAdapter(arrayAdapter);
 
-        // TODO find out why we can't view items clicked
         // set list item click listener to open post viewer activity
         postsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -231,6 +233,7 @@ public class FeedActivity extends AppCompatActivity {
         if (requestCode == NEW_ITEM_REQUEST && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 Post result = (Post) data.getSerializableExtra("new_post");
+                result.setSeller(userName);
                 mPostDatabaseReference.push().setValue(result);
             }
         }
@@ -256,7 +259,6 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void setupUserSignedOut() {
-        userName = "Anonymous";
         postsArrayList.clear();
         arrayAdapter.notifyDataSetChanged();
         mPostDatabaseReference.removeEventListener(mPostChildEventListener);

@@ -50,6 +50,36 @@ public class CreateNewPostActivity extends AppCompatActivity {
             newPost.setDescription(description);
         }
 
+        // if price text exists, add to new post
+        EditText priceEditor = (EditText) findViewById(R.id.price);
+        String price = priceEditor.getText().toString();
+        if (!price.equals("")) {
+            newPost.setPricePerQuantity(price);
+        }
+
+        // if location text exists, add to new post
+        EditText locationEditor = (EditText) findViewById(R.id.locationText);
+        String location = locationEditor.getText().toString();
+        if (!location.equals("")) {
+            newPost.setLocation(location);
+        }
+
+        // if quantity text exists, add to new post
+        EditText quantityEditor = (EditText) findViewById(R.id.quantityNumber);
+        String quantity = quantityEditor.getText().toString();
+        if (!quantity.equals("")) {
+            newPost.setQuantity(quantity);
+        }
+
+        // if quantity type exists, add to new post
+        Spinner quantityTypeEditor = (Spinner) findViewById(R.id.quantityType);
+        String quantityType = quantityTypeEditor.getSelectedItem().toString();
+        if(!quantityType.equals("")) {
+            newPost.setQuantityType(quantityType);
+        }
+
+
+
         // return post to PostFeed activity
         Intent returnIntent = new Intent();
         returnIntent.putExtra("new_post", newPost);

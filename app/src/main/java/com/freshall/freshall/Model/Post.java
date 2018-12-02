@@ -1,5 +1,7 @@
 package com.freshall.freshall.Model;
 
+import com.google.firebase.auth.FirebaseUser;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,16 +10,16 @@ import java.util.Date;
  */
 
 public class Post implements Serializable {
-    String title;
-    String description;
-    //    User seller;
-    String sellerName;
-    String location;
-    Double quantity;
-    String quantityType;
-    Double pricePerQuantity;
-    Date harvestDate;
-    Date expirationDate;
+    private String title;
+    private String description;
+    private String seller;
+    private String sellerName;
+    private String location;
+    private String quantity;
+    private String quantityType;
+    private String pricePerQuantity;
+    private Date harvestDate;
+    private Date expirationDate;
 
     //DVC
     public Post() {
@@ -25,15 +27,15 @@ public class Post implements Serializable {
         this.description = "description";
         this.sellerName = "seller_name";
         this.location = "city, province, country";
-        this.quantity = 0.0;
+        this.quantity = "0";
         this.quantityType = "each";
-        this.pricePerQuantity = 0.0;
+        this.pricePerQuantity = "negotiable";
         this.harvestDate = new Date(2000, 1, 1);
         this.expirationDate = new Date(2020, 1, 1);
     }
 
     //EVC
-    public Post(String title, String description, String sellerName, String location, Double quantity, String quantityType, Double pricePerQuantity, Date harvestDate, Date expirationDate) {
+    public Post(String title, String description, String sellerName, String location, String quantity, String quantityType, String pricePerQuantity, Date harvestDate, Date expirationDate) {
         this.title = title;
         this.description = description;
         this.sellerName = sellerName;
@@ -72,12 +74,12 @@ public class Post implements Serializable {
         this.location = location;
     }
 
-    public Double getQuantity() {
+    public String getQuantity() {
         return quantity;
     }
 
 
-    public void setQuantity(Double quantity) {
+    public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
 
@@ -89,11 +91,11 @@ public class Post implements Serializable {
         this.quantityType = quantityType;
     }
 
-    public Double getPricePerQuantity() {
+    public String getPricePerQuantity() {
         return pricePerQuantity;
     }
 
-    public void setPricePerQuantity(Double pricePerQuantity) {
+    public void setPricePerQuantity(String pricePerQuantity) {
         this.pricePerQuantity = pricePerQuantity;
     }
 
@@ -111,5 +113,13 @@ public class Post implements Serializable {
 
     public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    public void setSeller(String seller) {
+        this.seller = seller;
+    }
+
+    public String getSeller() {
+        return seller;
     }
 }

@@ -26,14 +26,20 @@ public class PostViewerActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
+                case R.id.nav_home:
+                    Log.i("navigation", "home button press");
+//                    mTextMessage.setText(R.string.title_home);
+                    Intent homeIntent = new Intent(PostViewerActivity.this, FeedActivity.class);
+                    startActivity(homeIntent);
                     return true;
-                case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
+                case R.id.nav_message:
+                    Log.i("navigation", "message button press");
+//                    mTextMessage.setText(R.string.title_notifications);
                     return true;
-                case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                case R.id.nav_user:
+                    Log.i("navigation", "user button press");
+                    Intent profileIntent = new Intent(PostViewerActivity.this, ProfileActivity.class);
+                    startActivity(profileIntent);
                     return true;
             }
             return false;
@@ -60,6 +66,23 @@ public class PostViewerActivity extends AppCompatActivity {
         // set description text
         TextView descText = (TextView) findViewById(R.id.description);
         descText.setText(selectedPost.getDescription());
+
+        // set price text
+        TextView priceText = (TextView) findViewById(R.id.price);
+        priceText.setText(selectedPost.getPricePerQuantity().toString());
+
+        // set location text
+        TextView locationText = (TextView) findViewById(R.id.locationText);
+        locationText.setText(selectedPost.getLocation());
+
+        // set quantity text
+        String quantity = selectedPost.getQuantity() + " " + selectedPost.getQuantityType();
+        TextView quantityText = (TextView) findViewById(R.id.quantity);
+        quantityText.setText(quantity);
+
+        // set user text
+        TextView sellerText = (TextView) findViewById(R.id.sellerName);
+        sellerText.setText(selectedPost.getSeller());
     }
 
     // when FAB is clicked to add to favorites, shows toast

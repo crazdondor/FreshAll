@@ -1,7 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.bingham.firebasefun.MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
@@ -12,4 +12,5 @@
         android:orderInCategory="200"
         android:title="@string/action_signout"
         app:showAsAction="never" />
+
 </menu>

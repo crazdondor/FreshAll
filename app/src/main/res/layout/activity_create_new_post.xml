@@ -9,7 +9,7 @@
 
     <ScrollView
         android:id="@+id/scrollView2"
-        android:layout_width="387dp"
+        android:layout_width="353dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/navigation"
         app:layout_constraintStart_toStartOf="parent">
@@ -110,6 +110,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:paddingTop="5dp"
                 android:text="Expected expiration on:" />
 
@@ -119,6 +121,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/sample_description"
                 android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:paddingTop="5dp"
                 app:layout_constraintRight_toLeftOf="parent" />
 
@@ -138,7 +142,6 @@
                 android:layout_height="50dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginEnd="5dp"
-                android:layout_marginRight="5dp"
                 android:onClick="cancelPost"
                 android:text="Cancel"
                 app:layout_constraintBottom_toBottomOf="parent"

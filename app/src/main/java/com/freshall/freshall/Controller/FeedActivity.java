@@ -1,5 +1,6 @@
 package com.freshall.freshall.Controller;
 
+import com.freshall.freshall.Model.FeedAdapter;
 import com.freshall.freshall.Model.Post;
 
 import android.app.Activity;
@@ -34,7 +35,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -51,8 +51,9 @@ public class FeedActivity extends AppCompatActivity {
 
     public TextView noPostsMessage;
     public ListView postsListView;
-    public List<Post> postsArrayList;
+    public ArrayList<Post> postsArrayList;
     public ArrayAdapter<Post> arrayAdapter;
+    private FeedAdapter feedAdapter;
 
     // server side setup
     // 1. enable google authentication provider
@@ -98,7 +99,6 @@ public class FeedActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation_bar);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         Menu menu = navigation.getMenu();
@@ -109,10 +109,9 @@ public class FeedActivity extends AppCompatActivity {
         noPostsMessage = (TextView) findViewById(R.id.noPostsText);
 
         postsArrayList = new ArrayList<Post>();
+        feedAdapter = new FeedAdapter(this, postsArrayList);
 
-        // create array adapter to display title and description of posts
-        // will need to make a custom array adapter probably to display photo + post descriptions
-
+        // create array adapter to display title and description of post
         arrayAdapter = new ArrayAdapter<Post>(this, android.R.layout.simple_list_item_2, android.R.id.text1, postsArrayList){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -127,7 +126,8 @@ public class FeedActivity extends AppCompatActivity {
         };
 
         // set array adapter
-        postsListView.setAdapter(arrayAdapter);
+//        postsListView.setAdapter(arrayAdapter);
+        postsListView.setAdapter(feedAdapter);
 
         // set list item click listener to open post viewer activity
         postsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

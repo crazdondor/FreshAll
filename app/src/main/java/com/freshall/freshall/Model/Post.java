@@ -1,6 +1,6 @@
 package com.freshall.freshall.Model;
 
-import com.google.firebase.auth.FirebaseUser;
+import android.graphics.drawable.Drawable;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -13,19 +13,18 @@ public class Post implements Serializable {
     private String title;
     private String description;
     private String seller;
-    private String sellerName;
     private String location;
     private String quantity;
     private String quantityType;
     private String pricePerQuantity;
     private Date harvestDate;
     private Date expirationDate;
+    private int postPhoto;
 
     //DVC
     public Post() {
         this.title = "title";
         this.description = "description";
-        this.sellerName = "seller_name";
         this.location = "city, province, country";
         this.quantity = "0";
         this.quantityType = "each";
@@ -35,13 +34,13 @@ public class Post implements Serializable {
     }
 
     //EVC
-    public Post(String title, String description, String sellerName, String location, String quantity, String quantityType, String pricePerQuantity, Date harvestDate, Date expirationDate) {
+    public Post(String title, String description, String location, String quantity, String quantityType, String pricePerQuantity, Date harvestDate, Date expirationDate, int postPhoto) {
         this.title = title;
         this.description = description;
-        this.sellerName = sellerName;
         this.location = location;
         this.quantity = quantity;
         this.quantityType = quantityType;
+        this.postPhoto = postPhoto;
     }
 
     public String getTitle() {
@@ -59,13 +58,7 @@ public class Post implements Serializable {
     public String getDescription() {
         return description;
     }
-
-    public String getSellerName() {return sellerName;}
-
-    public void setSellerName(String sellerName) {
-        this.sellerName = sellerName;
-    }
-
+    
     public String getLocation() {
         return location;
     }
@@ -121,5 +114,13 @@ public class Post implements Serializable {
 
     public String getSeller() {
         return seller;
+    }
+
+    public int getPostPhoto() {
+        return postPhoto;
+    }
+
+    public void setPostPhoto(int postPhoto) {
+        this.postPhoto = postPhoto;
     }
 }

@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 public class CreateNewPostActivity extends AppCompatActivity {
+    boolean postHasTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,10 @@ public class CreateNewPostActivity extends AppCompatActivity {
         String title = titleEditor.getText().toString();
         if (!title.equals("")) { // if not empty
             newPost.setTitle(title);
+            postHasTitle = true;
+        }
+        else {
+            postHasTitle = false;
         }
 
         // if description text exists, add to new post
@@ -78,12 +83,15 @@ public class CreateNewPostActivity extends AppCompatActivity {
             newPost.setQuantityType(quantityType);
         }
 
-
-
         // return post to PostFeed activity
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("new_post", newPost);
-        setResult(RESULT_OK, returnIntent);
-        finish();
+        if (postHasTitle) {
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("new_post", newPost);
+            setResult(RESULT_OK, returnIntent);
+            finish();
+        }
+        else {
+            Toast.makeText(this, "Please enter title", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -82,7 +82,7 @@ public class PostViewerActivity extends AppCompatActivity {
 
         // set user text
         TextView sellerText = (TextView) findViewById(R.id.sellerName);
-        sellerText.setText(selectedPost.getSeller());
+        sellerText.setText(selectedPost.getSeller().getFullName());
     }
 
     // when FAB is clicked to add to favorites, shows toast

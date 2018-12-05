@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.firebase.ui.auth.AuthUI;
+import com.freshall.freshall.Model.User;
 import com.freshall.freshall.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,6 +42,7 @@ public class FeedActivity extends AppCompatActivity {
     static final int SIGN_IN_REQUEST = 1;
     static final int NEW_ITEM_REQUEST = 2;
 
+    private User user;
     public String userName;
 
     public FirebaseDatabase mFirebaseDatabase;
@@ -82,6 +84,7 @@ public class FeedActivity extends AppCompatActivity {
                     Log.i("navigation", "user button press");
                     Intent profileIntent = new Intent(FeedActivity.this, ProfileActivity.class);
                     profileIntent.putExtra("username", userName);
+//                    profileIntent.putExtra("user", user);
                     startActivity(profileIntent);
                     break;
             }
@@ -155,8 +158,7 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 // dataSnapshot stores the Post
-                Post post =
-                        dataSnapshot.getValue(Post.class);
+                Post post = dataSnapshot.getValue(Post.class);
                 // add it to the list, notify adapter
                 postsArrayList.add(post);
                 arrayAdapter.notifyDataSetChanged();
@@ -220,6 +222,7 @@ public class FeedActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //when user signs in, show toast message
         if (requestCode == SIGN_IN_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 Toast.makeText(this, "You are now signed in", Toast.LENGTH_SHORT).show();
@@ -232,9 +235,9 @@ public class FeedActivity extends AppCompatActivity {
         // when CreateNewPostActivity finishes, get the new post and add to feed list
         if (requestCode == NEW_ITEM_REQUEST && resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                Post result = (Post) data.getSerializableExtra("new_post");
-                result.setSeller(userName);
-                mPostDatabaseReference.push().setValue(result);
+                Post resultPost = (Post) data.getSerializableExtra("new_post");
+                resultPost.setSeller(user);
+                mPostDatabaseReference.push().setValue(resultPost);
             }
         }
     }
@@ -253,7 +256,9 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void setupUserSignedIn(FirebaseUser user) {
-        userName = user.getDisplayName(); // get the user's name
+//        userName = user.getDisplayName(); // get the user's name
+        this.user = new User(user.getDisplayName(), user.getEmail(), user.getPhoneNumber());
+        this.userName = this.user.getFullName();
         mPostDatabaseReference
                 .addChildEventListener(mPostChildEventListener);
     }

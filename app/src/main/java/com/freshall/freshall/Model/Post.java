@@ -12,8 +12,7 @@ import java.util.Date;
 public class Post implements Serializable {
     private String title;
     private String description;
-    private String seller;
-    private String sellerName;
+    private User seller;
     private String location;
     private String quantity;
     private String quantityType;
@@ -25,7 +24,7 @@ public class Post implements Serializable {
     public Post() {
         this.title = "title";
         this.description = "description";
-        this.sellerName = "seller_name";
+        this.seller = new User();
         this.location = "city, province, country";
         this.quantity = "0";
         this.quantityType = "each";
@@ -35,10 +34,9 @@ public class Post implements Serializable {
     }
 
     //EVC
-    public Post(String title, String description, String sellerName, String location, String quantity, String quantityType, String pricePerQuantity, Date harvestDate, Date expirationDate) {
+    public Post(String title, String description, String location, String quantity, String quantityType, String pricePerQuantity, Date harvestDate, Date expirationDate) {
         this.title = title;
         this.description = description;
-        this.sellerName = sellerName;
         this.location = location;
         this.quantity = quantity;
         this.quantityType = quantityType;
@@ -58,12 +56,6 @@ public class Post implements Serializable {
 
     public String getDescription() {
         return description;
-    }
-
-    public String getSellerName() {return sellerName;}
-
-    public void setSellerName(String sellerName) {
-        this.sellerName = sellerName;
     }
 
     public String getLocation() {
@@ -115,11 +107,11 @@ public class Post implements Serializable {
         this.expirationDate = expirationDate;
     }
 
-    public void setSeller(String seller) {
+    public void setSeller(User seller) {
         this.seller = seller;
     }
 
-    public String getSeller() {
+    public User getSeller() {
         return seller;
     }
 }

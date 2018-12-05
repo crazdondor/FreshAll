@@ -1,43 +1,34 @@
 package com.freshall.freshall.Model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     // fields
-    String firstName;
-    String lastName;
+    String fullName;
     String email;
     String phone;
 
     // constructors
     public User() {
-        this.firstName = "First";
-        this.lastName = "Last";
+        this.fullName = "First Last";
         this.email = "firstlast";
         this.phone = "5551231234";
     }
 
-    public User(String firstName, String lastName, String email, String phone) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String fullName, String email, String phone) {
+        this.fullName = fullName;
         this.email = email;
         this.phone = phone;
     }
 
     // getters and setters
-    public String getFirstName() {
-        return firstName;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setFirstName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getEmail() {
@@ -64,5 +55,10 @@ public class User {
     void removeFriend(User exFriend){}
 
     void createChat(User chatFriend){}
+
+    @Override
+    public String toString() {
+        return fullName;
+    }
 
 }

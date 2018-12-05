@@ -69,7 +69,7 @@ public class PostViewerActivity extends AppCompatActivity {
 
         // set price text
         TextView priceText = (TextView) findViewById(R.id.price);
-        priceText.setText(selectedPost.getPricePerQuantity().toString());
+        priceText.setText("Price: " + selectedPost.getPricePerQuantity().toString());
 
         // set location text
         TextView locationText = (TextView) findViewById(R.id.locationText);

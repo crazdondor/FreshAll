@@ -89,8 +89,7 @@ public class CreateNewPostActivity extends AppCompatActivity {
             returnIntent.putExtra("new_post", newPost);
             setResult(RESULT_OK, returnIntent);
             finish();
-        }
-        else {
+        } else {
             Toast.makeText(this, "Please enter title", Toast.LENGTH_SHORT).show();
         }
     }

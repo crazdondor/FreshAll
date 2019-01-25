@@ -30,6 +30,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         editTextConfirmPass = (EditText) findViewById(R.id.registerConfirmPassEditText);
 
         mAuth = FirebaseAuth.getInstance();
+
+        findViewById(R.id.registerAccButton).setOnClickListener(this);
     }
 
     private void registerUser() {

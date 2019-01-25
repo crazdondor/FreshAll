@@ -196,17 +196,18 @@ public class FeedActivity extends AppCompatActivity {
                     // user is signed in
                     setupUserSignedIn(user);
                 } else {
+                    setupUserSignedOut();
                     // user is signed out
-                    mPostDatabaseReference.removeEventListener(mPostChildEventListener);
-                    Intent intent = AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setIsSmartLockEnabled(false)
-                            .setAvailableProviders(
-                                    Arrays.asList(
-                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
-                                    )
-                            ).build();
-                    startActivityForResult(intent, SIGN_IN_REQUEST);
+//                    mPostDatabaseReference.removeEventListener(mPostChildEventListener);
+//                    Intent intent = AuthUI.getInstance()
+//                            .createSignInIntentBuilder()
+//                            .setIsSmartLockEnabled(false)
+//                            .setAvailableProviders(
+//                                    Arrays.asList(
+//                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
+//                                    )
+//                            ).build();
+//                    startActivityForResult(intent, SIGN_IN_REQUEST);
                 }
             }
         };

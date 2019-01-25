@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.freshall.freshall.R;
@@ -16,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
+    ProgressBar progressBar;
     EditText editTextEmail,  editTextPassword, editTextConfirmPass;
 
     private FirebaseAuth mAuth;
@@ -28,6 +30,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         editTextEmail = (EditText) findViewById(R.id.registerEmailEditText);
         editTextPassword = (EditText) findViewById(R.id.registerPasswordEditText);
         editTextConfirmPass = (EditText) findViewById(R.id.registerConfirmPassEditText);
+        progressBar = (ProgressBar) findViewById(R.id.registerProgBar);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -69,11 +72,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
+        progressBar.setVisibility(View.VISIBLE);
+
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
+                    progressBar.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), "User Created Successfully", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Could not Create User", Toast.LENGTH_SHORT).show();
                 }
             }
         });

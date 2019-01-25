@@ -81,6 +81,7 @@ public class FeedActivity extends AppCompatActivity {
 //                    mTextMessage.setText(R.string.title_notifications);
                     break;
                 case R.id.nav_user:
+                    // TODO find out why LoginActivity is started when hitting this
                     Log.i("navigation", "user button press");
                     Intent profileIntent = new Intent(FeedActivity.this, ProfileActivity.class);
                     profileIntent.putExtra("username", userName);
@@ -284,7 +285,7 @@ public class FeedActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_signout) {
-            AuthUI.getInstance().signOut(this);
+            mFirebaseAuth.signOut();
         }
         return super.onOptionsItemSelected(item);
     }

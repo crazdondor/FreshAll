@@ -10,7 +10,7 @@
 
     <EditText
         android:id="@+id/emailText"
-        android:layout_width="250dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:hint="@string/Email_EditText"/>
 
@@ -31,7 +31,6 @@
         android:id="@+id/registerButton"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="@string/register_button"
-        android:onClick="registerNewAccount"/>
+        android:text="@string/register_button" />
 
 </LinearLayout>

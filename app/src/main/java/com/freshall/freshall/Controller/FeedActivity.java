@@ -267,6 +267,8 @@ public class FeedActivity extends AppCompatActivity {
         postsArrayList.clear();
         arrayAdapter.notifyDataSetChanged();
         mPostDatabaseReference.removeEventListener(mPostChildEventListener);
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     @Override

@@ -115,7 +115,7 @@ public class PostViewerActivity extends AppCompatActivity {
 
         // on edit result, delete old post and create new one
         if (requestCode == EDIT_POST_REQUEST && resultCode == RESULT_OK) {
-            
+
         }
     }
 }

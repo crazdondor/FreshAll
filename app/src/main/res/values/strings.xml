@@ -18,8 +18,10 @@
     <string name="nav_add">Add</string>
     <string name="nav_message">Message</string>
     <string name="nav_user">User</string>
-    <string name="prof_pic">Profile Picture</string>
+    <string name="profpic">Profile Picture</string>
     <string name="Name">Name</string>
+    <string name="btnCam">Camera Button</string>
+
 
     <string-array name="quantity_type_spinner_values">
         <item>ea</item>

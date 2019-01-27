@@ -1,6 +1,10 @@
 package com.freshall.freshall.Controller;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.Image;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +44,10 @@ public class ProfileActivity extends AppCompatActivity {
     private DatabaseReference mPostDatabaseReference;
     public ChildEventListener mPostChildEventListener;
 
+    ImageView imageView;
+
+    static final int REQUEST_IMAGE_CAPTURE = 0;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -62,10 +72,13 @@ public class ProfileActivity extends AppCompatActivity {
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+
 
         Intent feedIntent = getIntent();
         username = (String) feedIntent.getStringExtra("username");
@@ -80,76 +93,36 @@ public class ProfileActivity extends AppCompatActivity {
         MenuItem menuItem = menu.getItem(2);
         menuItem.setChecked(true);
 
-        mPostDatabaseReference = FirebaseDatabase.getInstance().getReference().child("posts");
+        Button btnCam = (Button) findViewById(R.id.btnCam);
 
-        userPosts = new ArrayList<>();
 
-        listView = (ListView) findViewById(R.id.userPosts);
-
-        arrayAdapter = new ArrayAdapter<Post>(this, android.R.layout.simple_list_item_2, android.R.id.text1, userPosts){
+        btnCam.setOnClickListener(new View.OnClickListener() {
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-
-                text1.setText(userPosts.get(position).getTitle());
-                text2.setText(userPosts.get(position).getDescription());
-                return view;
-            }
-        };
-
-        listView.setAdapter(arrayAdapter);
-
-        mPostDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // dataSnapshot stores the Post
-                Post post =
-                        dataSnapshot.getValue(Post.class);
-                // add it to the list, notify adapter
-                userPosts.add(post);
-                arrayAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onClick(View v) {
+                takePicture();
             }
         });
+    }
 
-        mPostChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                // dataSnapshot stores the Post
-                Post post =
-                        dataSnapshot.getValue(Post.class);
-                // add it to the list, notify adapter
-                userPosts.add(post);
-                arrayAdapter.notifyDataSetChanged();
+    private void takePicture(){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE){
+            if(resultCode == Activity.RESULT_OK){
+                ImageView imageView = (ImageView) findViewById(R.id.profpic);
+                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                imageView.setImageBitmap(bitmap);
             }
+        }
+    }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+    public void captureImage(View camButton){
 
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-
-        mPostDatabaseReference.addChildEventListener(mPostChildEventListener);
     }
 }

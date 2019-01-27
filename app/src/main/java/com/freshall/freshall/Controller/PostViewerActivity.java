@@ -1,5 +1,6 @@
 package com.freshall.freshall.Controller;
 
+import com.freshall.freshall.Model.User;
 import com.freshall.freshall.R;
 import com.freshall.freshall.Model.Post;
 
@@ -16,9 +17,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Objects;
+
 public class PostViewerActivity extends AppCompatActivity {
 
+    private int EDIT_POST_REQUEST = 4;
     private TextView mTextMessage;
+    private Intent feedIntent;
+    private Post selectedPost;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -56,8 +62,8 @@ public class PostViewerActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         // get post that was clicked to populate view
-        Intent feedIntent = getIntent();
-        Post selectedPost = (Post) feedIntent.getSerializableExtra("selectedPost");
+        feedIntent = getIntent();
+        selectedPost = (Post) feedIntent.getSerializableExtra("selectedPost");
 
         // set title text
         TextView titleText = (TextView) findViewById(R.id.titleText);
@@ -87,6 +93,29 @@ public class PostViewerActivity extends AppCompatActivity {
 
     // when FAB is clicked to add to favorites, shows toast
     public void addToFavorites(View view) {
-        Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show();
+        User currentUser = (User) feedIntent.getSerializableExtra("user");
+
+        // if seller selects own post, display edit button instead of favorites
+        // on edit button clicked, send data from post to create_new_post to populate with
+        if (selectedPost.getSeller().getEmail().equals(currentUser.getEmail())) {
+            Intent editPostIntent = new Intent(PostViewerActivity.this, CreateNewPostActivity.class);
+            editPostIntent.putExtra("current_post", selectedPost);
+            startActivityForResult(editPostIntent, EDIT_POST_REQUEST);
+        }
+
+        // if not current user's post, add post to favorites
+        else {
+            Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // on edit result, delete old post and create new one
+        if (requestCode == EDIT_POST_REQUEST && resultCode == RESULT_OK) {
+            
+        }
     }
 }

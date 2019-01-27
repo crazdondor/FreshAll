@@ -142,6 +142,7 @@ public class FeedActivity extends AppCompatActivity {
                 // add post that was clicked to intent, then start post viewer activity
                 Post selectedPost = (Post) adapterView.getAdapter().getItem(position);
                 viewPost.putExtra("selectedPost", selectedPost);
+                viewPost.putExtra("user", user);
                 startActivity(viewPost);
             }
         });

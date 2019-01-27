@@ -2,6 +2,7 @@
     <string name="app_name">FreshAll</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
+    <string name="password_confirm_hint">Confirm Password</string>
     <string name="login_button">Login</string>
     <string name="register_button">Register Account</string>
     <string name="title_activity_feed">Post Feed</string>
@@ -20,6 +21,8 @@
     <string name="nav_user">User</string>
     <string name="prof_pic">Profile Picture</string>
     <string name="Name">Name</string>
+    <string name="Email_EditText">Email</string>
+    <string name="Password_EditText">Password</string>
 
     <string-array name="quantity_type_spinner_values">
         <item>ea</item>

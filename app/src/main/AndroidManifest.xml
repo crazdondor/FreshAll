@@ -21,7 +21,9 @@
         </activity>
         <activity android:name=".Controller.CreateNewPostActivity" />
         <activity android:name=".Controller.PostViewerActivity" />
-        <activity android:name=".Controller.ProfileActivity"></activity>
+        <activity android:name=".Controller.ProfileActivity" />
+        <activity android:name=".Controller.LoginActivity" />
+        <activity android:name=".Controller.RegisterActivity"></activity>
     </application>
 
 </manifest>

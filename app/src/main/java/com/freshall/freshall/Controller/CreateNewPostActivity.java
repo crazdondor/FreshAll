@@ -2,10 +2,10 @@ package com.freshall.freshall.Controller;
 
 import com.freshall.freshall.R;
 import com.freshall.freshall.Model.Post;
+
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -27,7 +27,8 @@ public class CreateNewPostActivity extends AppCompatActivity {
         quantityTypeSpinner.setAdapter(adapter);
     }
 
-    // when cancel button is clicked, finish activity without saving data
+
+        // when cancel button is clicked, finish activity without saving data
     public void cancelPost(View view) {
         setResult(RESULT_OK, null);
         finish();

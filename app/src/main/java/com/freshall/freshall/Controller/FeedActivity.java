@@ -81,11 +81,9 @@ public class FeedActivity extends AppCompatActivity {
 //                    mTextMessage.setText(R.string.title_notifications);
                     break;
                 case R.id.nav_user:
-                    // TODO find out why LoginActivity is started when hitting this
                     Log.i("navigation", "user button press");
                     Intent profileIntent = new Intent(FeedActivity.this, ProfileActivity.class);
                     profileIntent.putExtra("username", userName);
-//                    profileIntent.putExtra("user", user);
                     startActivity(profileIntent);
                     break;
             }
@@ -199,16 +197,6 @@ public class FeedActivity extends AppCompatActivity {
                 } else {
                     setupUserSignedOut();
                     // user is signed out
-//                    mPostDatabaseReference.removeEventListener(mPostChildEventListener);
-//                    Intent intent = AuthUI.getInstance()
-//                            .createSignInIntentBuilder()
-//                            .setIsSmartLockEnabled(false)
-//                            .setAvailableProviders(
-//                                    Arrays.asList(
-//                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
-//                                    )
-//                            ).build();
-//                    startActivityForResult(intent, SIGN_IN_REQUEST);
                 }
             }
         };
@@ -254,10 +242,13 @@ public class FeedActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause(); // remove the authstatelistener
         mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-        setupUserSignedOut();
+        postsArrayList.clear();
+        arrayAdapter.notifyDataSetChanged();
+        mPostDatabaseReference.removeEventListener(mPostChildEventListener);
     }
 
     private void setupUserSignedIn(FirebaseUser user) {
+        Log.i("auth", user.getDisplayName());
 //        userName = user.getDisplayName(); // get the user's name
         this.user = new User(user.getDisplayName(), user.getEmail(), user.getPhoneNumber());
         this.userName = this.user.getFullName();
@@ -269,7 +260,9 @@ public class FeedActivity extends AppCompatActivity {
         postsArrayList.clear();
         arrayAdapter.notifyDataSetChanged();
         mPostDatabaseReference.removeEventListener(mPostChildEventListener);
+        mFirebaseAuth.signOut();
         Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 

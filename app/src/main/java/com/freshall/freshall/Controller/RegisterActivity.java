@@ -16,11 +16,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     ProgressBar progressBar;
-    EditText editTextEmail,  editTextPassword, editTextConfirmPass;
+    EditText editTextEmail,  editTextPassword, editTextConfirmPass, editTextName;
 
     private FirebaseAuth mAuth;
 
@@ -32,6 +34,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         editTextEmail = (EditText) findViewById(R.id.registerEmailEditText);
         editTextPassword = (EditText) findViewById(R.id.registerPasswordEditText);
         editTextConfirmPass = (EditText) findViewById(R.id.registerConfirmPassEditText);
+        editTextName = (EditText) findViewById(R.id.nameEditText);
         progressBar = (ProgressBar) findViewById(R.id.registerProgBar);
 
         mAuth = FirebaseAuth.getInstance();
@@ -43,6 +46,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         final String email = editTextEmail.getText().toString();
         String password = editTextPassword.getText().toString();
         String confpassword = editTextConfirmPass.getText().toString();
+        final String name = editTextName.getText().toString();
 
         if (email.isEmpty()) {
             editTextEmail.setError("Email is required");
@@ -74,6 +78,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
+        if (name.isEmpty()) {
+            editTextName.setError("Name is required");
+            editTextName.requestFocus();
+            return;
+        }
+
         progressBar.setVisibility(View.VISIBLE);
 
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -81,6 +91,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     progressBar.setVisibility(View.GONE);
+
+                    // set display name
+                    UserProfileChangeRequest profileChangeRequest = new  UserProfileChangeRequest.Builder()
+                            .setDisplayName(name)
+                            .build();
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    user.updateProfile(profileChangeRequest);
+
                     Intent intent = new Intent(getApplicationContext(), FeedActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);

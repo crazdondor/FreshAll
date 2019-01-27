@@ -62,6 +62,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
+
+
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {

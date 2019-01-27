@@ -41,6 +41,7 @@ public class FeedActivity extends AppCompatActivity {
 
     static final int SIGN_IN_REQUEST = 1;
     static final int NEW_ITEM_REQUEST = 2;
+    static final int EDIT_POST_REQUEST = 4;
 
     private User user;
     public String userName;
@@ -241,6 +242,9 @@ public class FeedActivity extends AppCompatActivity {
                 mPostDatabaseReference.push().setValue(resultPost);
             }
         }
+
+        // when PostViewer finishes from edit, open new PostViewer for edited post
+//        if (requestCode == )
     }
 
     @Override

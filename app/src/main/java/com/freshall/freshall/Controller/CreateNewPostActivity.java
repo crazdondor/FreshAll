@@ -14,13 +14,11 @@ import android.widget.Toast;
 
 public class CreateNewPostActivity extends AppCompatActivity {
     boolean postHasTitle;
-    boolean isNewPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_post);
-        isNewPost = true;
 
         // set adapter to populate quantity type spinner
         Spinner quantityTypeSpinner = (Spinner) findViewById(R.id.quantityType);
@@ -33,7 +31,6 @@ public class CreateNewPostActivity extends AppCompatActivity {
         Post selectedPost = (Post) editIntent.getSerializableExtra("current_post");
 
         if (selectedPost != null) {
-            isNewPost = false;
 
             EditText titleEditor = (EditText) findViewById(R.id.titleText);
             titleEditor.setText(selectedPost.getTitle());
@@ -65,7 +62,6 @@ public class CreateNewPostActivity extends AppCompatActivity {
 
     // when confirm button is clicked, create new post object with entered fields
     public void createPost(View view) {
-        if (isNewPost) {
             Post newPost = new Post();
 
             // if title text exists, add to new post
@@ -122,10 +118,5 @@ public class CreateNewPostActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Please enter title", Toast.LENGTH_SHORT).show();
             }
-        }
-        // if not new post (ie is an edited post), ???
-        else {
-
-        }
     }
 }

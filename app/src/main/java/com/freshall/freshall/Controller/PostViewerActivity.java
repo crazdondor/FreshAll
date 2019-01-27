@@ -3,6 +3,8 @@ package com.freshall.freshall.Controller;
 import com.freshall.freshall.Model.User;
 import com.freshall.freshall.R;
 import com.freshall.freshall.Model.Post;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +27,9 @@ public class PostViewerActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private Intent feedIntent;
     private Post selectedPost;
+    User currentUser;
+    public FirebaseDatabase mFirebaseDatabase;
+    public DatabaseReference mPostDatabaseReference;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -93,7 +98,7 @@ public class PostViewerActivity extends AppCompatActivity {
 
     // when FAB is clicked to add to favorites, shows toast
     public void addToFavorites(View view) {
-        User currentUser = (User) feedIntent.getSerializableExtra("user");
+        currentUser = (User) feedIntent.getSerializableExtra("user");
 
         // if seller selects own post, display edit button instead of favorites
         // on edit button clicked, send data from post to create_new_post to populate with
@@ -112,10 +117,22 @@ public class PostViewerActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        mFirebaseDatabase =
+                FirebaseDatabase.getInstance();
+        mPostDatabaseReference =
+                mFirebaseDatabase.getReference().child("posts");
 
         // on edit result, delete old post and create new one
+        // TODO: delete old post
         if (requestCode == EDIT_POST_REQUEST && resultCode == RESULT_OK) {
-
+            if (data != null) {
+                Post resultPost = (Post) data.getSerializableExtra("new_post");
+                resultPost.setSeller(currentUser);
+                mPostDatabaseReference.push().setValue(resultPost);
+            }
+            // after post is created, return to FeedView to open new post viewer
+            setResult(RESULT_OK);
+            finish();
         }
     }
 }

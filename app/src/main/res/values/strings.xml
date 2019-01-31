@@ -23,6 +23,7 @@
     <string name="Name">Name</string>
     <string name="Email_EditText">Email</string>
     <string name="Password_EditText">Password</string>
+    <string name="Location">Location:</string>
 
     <string-array name="quantity_type_spinner_values">
         <item>ea</item>

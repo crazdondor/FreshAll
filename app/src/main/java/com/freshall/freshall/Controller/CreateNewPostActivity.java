@@ -2,7 +2,19 @@ package com.freshall.freshall.Controller;
 
 import com.freshall.freshall.R;
 import com.freshall.freshall.Model.Post;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,10 +22,21 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class CreateNewPostActivity extends AppCompatActivity {
     boolean postHasTitle;
+
+    private FusedLocationProviderClient mFusedLocationClient;
+
+    static final int REQUEST_LOCATION = 1;
+
+    protected Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +48,25 @@ public class CreateNewPostActivity extends AppCompatActivity {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.quantity_type_spinner_values, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         quantityTypeSpinner.setAdapter(adapter);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // location granted, get location
+            final TextView locationText = (TextView) findViewById(R.id.locationText);
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            setLocationText(location);
+                        }
+                    });
+        } else {
+            // permission not granted, ask user
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        }
+
     }
 
     // when cancel button is clicked, finish activity without saving data
@@ -63,9 +105,9 @@ public class CreateNewPostActivity extends AppCompatActivity {
         }
 
         // if location text exists, add to new post
-        EditText locationEditor = (EditText) findViewById(R.id.locationText);
-        String location = locationEditor.getText().toString();
-        if (!location.equals("")) {
+        TextView locationText = (TextView) findViewById(R.id.locationText);
+        String location = locationText.getText().toString();
+        if (!location.isEmpty()) {
             newPost.setLocation(location);
         }
 
@@ -93,4 +135,42 @@ public class CreateNewPostActivity extends AppCompatActivity {
             Toast.makeText(this, "Please enter title", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int grantResults[]) {
+        if (requestCode == REQUEST_LOCATION) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // get location
+            } else {
+                // access denied
+            }
+        }
+    }
+
+    private void setLocationText(Location location) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        List<Address> addresses = null;
+
+        try {
+            addresses = geocoder.getFromLocation(
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    1);
+        } catch (IOException ioException) {
+            Log.e("Location", "Service not Available", ioException);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            Log.e("Location", "Bad Arguments", illegalArgumentException);
+        }
+
+        if (addresses == null || addresses.size() == 0) {
+            // no address found
+            Log.e("Location", "No addresses found");
+        } else {
+            // set location TextView
+            TextView locationText = (TextView) findViewById(R.id.locationText);
+            locationText.setText((CharSequence) addresses.get(0).getLocality());
+        }
+    }
+
 }

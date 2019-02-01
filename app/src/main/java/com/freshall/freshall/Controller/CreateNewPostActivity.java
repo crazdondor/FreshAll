@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 public class CreateNewPostActivity extends AppCompatActivity {
     boolean postHasTitle;
+    Post selectedPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +28,9 @@ public class CreateNewPostActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         quantityTypeSpinner.setAdapter(adapter);
 
-        // if editing post, populate layout with intent variables
+        // if editing post, populate layout with intent variables and add mark sold button
         Intent editIntent = getIntent();
-        Post selectedPost = (Post) editIntent.getSerializableExtra("current_post");
+        selectedPost = (Post) editIntent.getSerializableExtra("current_post");
 
         if (selectedPost != null) {
 
@@ -51,6 +53,9 @@ public class CreateNewPostActivity extends AppCompatActivity {
             // TODO: figure out how to determine int value from String quantityType in Post obj
 //        Spinner quantityTypeEditor = (Spinner) findViewById(R.id.quantityType);
 //        quantityTypeEditor.setSelection(0);
+
+            Button soldButton = (Button) findViewById(R.id.postSold);
+            soldButton.setVisibility(View.VISIBLE);
         }
     }
 

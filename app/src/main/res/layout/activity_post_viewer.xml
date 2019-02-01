@@ -130,6 +130,20 @@
                 android:paddingTop="5dp"
                 android:text="@string/sample_description" />
 
+            <Button
+                android:id="@+id/postSold"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="10dp"
+                android:background="#FF0000"
+                android:onClick="markSold"
+                android:text="Mark as sold"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
         </LinearLayout>
 
     </ScrollView>

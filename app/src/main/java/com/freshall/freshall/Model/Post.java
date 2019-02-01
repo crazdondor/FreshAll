@@ -19,6 +19,7 @@ public class Post implements Serializable {
     private String pricePerQuantity;
     private Date harvestDate;
     private Date expirationDate;
+    private Boolean isSold;
 
     //DVC
     public Post() {
@@ -31,6 +32,7 @@ public class Post implements Serializable {
         this.pricePerQuantity = "negotiable";
         this.harvestDate = new Date(2000, 1, 1);
         this.expirationDate = new Date(2020, 1, 1);
+        this.isSold = false;
     }
 
     //EVC
@@ -114,4 +116,8 @@ public class Post implements Serializable {
     public User getSeller() {
         return seller;
     }
+
+    public Boolean getIsSold() { return isSold; }
+
+    public void setIsSold(Boolean isSold) { this.isSold = isSold; }
 }

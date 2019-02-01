@@ -42,6 +42,7 @@ public class FeedActivity extends AppCompatActivity {
     static final int SIGN_IN_REQUEST = 1;
     static final int NEW_ITEM_REQUEST = 2;
     static final int EDIT_POST_REQUEST = 4;
+    static final int VIEW_POST_REQUEST = 10;
 
     private User user;
     public String userName;
@@ -144,7 +145,7 @@ public class FeedActivity extends AppCompatActivity {
                 Post selectedPost = (Post) adapterView.getAdapter().getItem(position);
                 viewPost.putExtra("selectedPost", selectedPost);
                 viewPost.putExtra("user", user);
-                startActivity(viewPost);
+                startActivityForResult(viewPost, VIEW_POST_REQUEST);
             }
         });
 

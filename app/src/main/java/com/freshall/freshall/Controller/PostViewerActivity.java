@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,10 +73,13 @@ public class PostViewerActivity extends AppCompatActivity {
         selectedPost = (Post) feedIntent.getSerializableExtra("selectedPost");
         currentUser = (User) feedIntent.getSerializableExtra("user");
 
-        // if user clicked own post, FAB is edit button; else FAB is fave button
+        // if user clicked own post, FAB is edit button and mark sold button visible
         if (selectedPost.getSeller().getEmail().equals(currentUser.getEmail())) {
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.favorite);
             fab.setImageResource(R.drawable.ic_edit);
+
+            Button markSoldButton = (Button) findViewById(R.id.postSold);
+            markSoldButton.setVisibility(View.VISIBLE);
         }
 
         // set title text
@@ -142,5 +146,15 @@ public class PostViewerActivity extends AppCompatActivity {
             setResult(RESULT_OK);
             finish();
         }
+    }
+
+    //when mark as sold button is clicked, remove post from feed
+    public void markSold(View view) {
+        selectedPost.setIsSold(true);
+
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("new_post", selectedPost);
+        setResult(RESULT_OK, returnIntent);
+        finish();
     }
 }

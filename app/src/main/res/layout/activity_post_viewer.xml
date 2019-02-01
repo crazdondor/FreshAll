@@ -15,7 +15,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
         android:clickable="true"
-        android:onClick="addToFavorites"
+        android:onClick="fab_clicked"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_input_add" />

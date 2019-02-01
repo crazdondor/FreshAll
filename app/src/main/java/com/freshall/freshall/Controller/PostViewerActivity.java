@@ -6,6 +6,7 @@ import com.freshall.freshall.Model.Post;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
@@ -69,6 +70,13 @@ public class PostViewerActivity extends AppCompatActivity {
         // get post that was clicked to populate view
         feedIntent = getIntent();
         selectedPost = (Post) feedIntent.getSerializableExtra("selectedPost");
+        currentUser = (User) feedIntent.getSerializableExtra("user");
+
+        // if user clicked own post, FAB is edit button; else FAB is fave button
+        if (selectedPost.getSeller().getEmail().equals(currentUser.getEmail())) {
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.favorite);
+            fab.setImageResource(R.drawable.ic_edit);
+        }
 
         // set title text
         TextView titleText = (TextView) findViewById(R.id.titleText);
@@ -97,7 +105,7 @@ public class PostViewerActivity extends AppCompatActivity {
     }
 
     // when FAB is clicked to add to favorites, shows toast
-    public void addToFavorites(View view) {
+    public void fab_clicked(View view) {
         currentUser = (User) feedIntent.getSerializableExtra("user");
 
         // if seller selects own post, display edit button instead of favorites

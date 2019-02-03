@@ -80,6 +80,9 @@ public class PostViewerActivity extends AppCompatActivity {
 
             Button markSoldButton = (Button) findViewById(R.id.postSold);
             markSoldButton.setVisibility(View.VISIBLE);
+
+            Button deleteButton = (Button) findViewById(R.id.deletePost);
+            deleteButton.setVisibility(View.VISIBLE);
         }
 
         // set title text
@@ -125,6 +128,16 @@ public class PostViewerActivity extends AppCompatActivity {
             Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show();
         }
     }
+    public void DeletePost(View view) {
+    remove(selectedPost);
+    finish();
+    }
+    public void remove(Post post){
+        String uuid = post.getUuid();
+        DatabaseReference removing  = FirebaseDatabase.getInstance().getReference("posts").child(uuid);
+        removing.removeValue();
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -151,9 +164,10 @@ public class PostViewerActivity extends AppCompatActivity {
     //when mark as sold button is clicked, remove post from feed
     public void markSold(View view) {
         selectedPost.setIsSold(true);
+//        Log.d("post sold", "markSold: marked as sold");
 
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("new_post", selectedPost);
+        returnIntent.putExtra("sold_post", selectedPost);
         setResult(RESULT_OK, returnIntent);
         finish();
     }

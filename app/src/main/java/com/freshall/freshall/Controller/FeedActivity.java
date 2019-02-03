@@ -169,7 +169,13 @@ public class FeedActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Post post = dataSnapshot.getValue(Post.class);
 
+                // if post changed to sold, remove from posts array list
+                if (post.getIsSold()) {
+//                    postsArrayList.remove(postsArrayList.get());
+                    arrayAdapter.notifyDataSetChanged();
+                }
             }
 
             @Override
@@ -187,7 +193,6 @@ public class FeedActivity extends AppCompatActivity {
 
             }
         };
-
 
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -240,17 +245,24 @@ public class FeedActivity extends AppCompatActivity {
             if (data != null) {
                 Post resultPost = (Post) data.getSerializableExtra("new_post");
                 resultPost.setSeller(user);
-                mPostDatabaseReference.push().setValue(resultPost);
+                String uuid = resultPost.getUuid();
+                mPostDatabaseReference.child(uuid).setValue(resultPost); // add post to firebase
             }
         }
 
-        // when PostViewer finishes from edit, open new PostViewer for edited post
-//        if (requestCode == )
+        // when PostViewer finishes from view, if post sold, remove from feed
+        if (requestCode == VIEW_POST_REQUEST && resultCode == Activity.RESULT_OK) {
+
+            Post sold_post = (Post) data.getSerializableExtra("sold_post");
+            Log.d("view ended", "onActivityResult: " + sold_post.getIsSold());
+        }
     }
+
 
     @Override
     protected void onResume() {
-        super.onResume(); // attach the authstatelistener
+        super.onResume();
+        // attach the authstatelistener
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 

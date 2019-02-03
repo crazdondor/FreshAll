@@ -54,8 +54,6 @@ public class CreateNewPostActivity extends AppCompatActivity {
 //        Spinner quantityTypeEditor = (Spinner) findViewById(R.id.quantityType);
 //        quantityTypeEditor.setSelection(0);
 
-            Button soldButton = (Button) findViewById(R.id.postSold);
-            soldButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -113,6 +111,8 @@ public class CreateNewPostActivity extends AppCompatActivity {
             if (!quantityType.equals("")) {
                 newPost.setQuantityType(quantityType);
             }
+
+            newPost.setIsSold(false);
 
             // return post to PostFeed activity
             if (postHasTitle) {

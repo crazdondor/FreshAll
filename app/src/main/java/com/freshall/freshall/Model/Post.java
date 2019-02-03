@@ -4,12 +4,10 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
 import java.util.Date;
-
-/**
- * Created by angelarae on 10/28/18.
- */
+import java.util.UUID;
 
 public class Post implements Serializable {
+    private String uuid;
     private String title;
     private String description;
     private User seller;
@@ -23,6 +21,7 @@ public class Post implements Serializable {
 
     //DVC
     public Post() {
+        this.uuid = UUID.randomUUID().toString();
         this.title = "title";
         this.description = "description";
         this.seller = new User();
@@ -42,6 +41,9 @@ public class Post implements Serializable {
         this.location = location;
         this.quantity = quantity;
         this.quantityType = quantityType;
+    }
+    public String getUuid(){
+        return uuid;
     }
 
     public String getTitle() {

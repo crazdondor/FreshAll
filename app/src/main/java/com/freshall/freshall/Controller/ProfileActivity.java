@@ -1,12 +1,17 @@
 package com.freshall.freshall.Controller;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,7 +34,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +54,10 @@ public class ProfileActivity extends AppCompatActivity {
 
     ImageView imageView;
 
+
     static final int REQUEST_IMAGE_CAPTURE = 0;
+    static final int WRITE_EXTERNAL_REQUEST = 0;
+    static final int CHOOSE_IMAGE = 101;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -78,7 +89,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-
+        FirebaseStorage storage = FirebaseStorage.getInstance();
 
         Intent feedIntent = getIntent();
         username = (String) feedIntent.getStringExtra("username");
@@ -102,12 +113,53 @@ public class ProfileActivity extends AppCompatActivity {
                 takePicture();
             }
         });
+        includesForCreateReference();
+        uploadImageToFirebase();
     }
+    public void includesForCreateReference(){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
 
+        StorageReference storageRef = storage.getReference("gs://freshall-5c50e.appspot.com");
+        StorageReference imagesRef = storageRef.child("images");
+
+    }
     private void takePicture(){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
+    public void takeAndSavePicture() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_REQUEST
+            );
+        } else {
+            // we have permission
+        }
+    }
+
+    private void showExistingPhotos(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), CHOOSE_IMAGE);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == WRITE_EXTERNAL_REQUEST) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // try again
+                takeAndSavePicture();
+            }
+            else {
+                Toast.makeText(this, "We need permission!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    private void uploadImageToFirebase(){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference profileImage = FirebaseStorage.getInstance().getReference();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

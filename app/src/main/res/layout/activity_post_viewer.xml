@@ -12,13 +12,12 @@
         android:layout_width="198dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
         android:clickable="true"
         android:onClick="addToFavorites"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/btn_star" />
 
     <ScrollView
         android:layout_width="match_parent"

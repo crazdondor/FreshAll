@@ -83,6 +83,7 @@ public class FeedActivity extends AppCompatActivity {
                 case R.id.nav_user:
                     Log.i("navigation", "user button press");
                     Intent profileIntent = new Intent(FeedActivity.this, ProfileActivity.class);
+                    profileIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     profileIntent.putExtra("username", userName);
                     startActivity(profileIntent);
                     break;

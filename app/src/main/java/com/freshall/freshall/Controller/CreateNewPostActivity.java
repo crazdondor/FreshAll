@@ -59,7 +59,11 @@ public class CreateNewPostActivity extends AppCompatActivity {
                     .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
-                            setLocationText(location);
+                            if (location == null) {
+                                locationText.setText("Null location");
+                            } else {
+                                setLocationText(location);
+                            }
                         }
                     });
         } else {

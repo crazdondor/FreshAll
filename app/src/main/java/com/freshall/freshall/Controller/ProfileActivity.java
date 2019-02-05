@@ -48,6 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
                     Log.i("navigation", "home button press");
 //                    mTextMessage.setText(R.string.title_home);
                     Intent homeIntent = new Intent(ProfileActivity.this, FeedActivity.class);
+                    homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(homeIntent);
                     break;
                 case R.id.nav_message:

@@ -106,7 +106,7 @@ public class CreateNewPostActivity extends AppCompatActivity {
         }
 
         // if location text exists, add to new post
-        EditText locationEditor = (EditText) findViewById(R.id.locationText);
+        TextView locationEditor = (TextView) findViewById(R.id.locationText);
         String location = locationEditor.getText().toString();
         if (!location.equals("")) {
             newPost.setLocation(location);

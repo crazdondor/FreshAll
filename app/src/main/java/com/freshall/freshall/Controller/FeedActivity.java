@@ -41,6 +41,8 @@ public class FeedActivity extends AppCompatActivity {
 
     static final int SIGN_IN_REQUEST = 1;
     static final int NEW_ITEM_REQUEST = 2;
+    static final int EDIT_POST_REQUEST = 4;
+    static final int VIEW_POST_REQUEST = 10;
 
     private User user;
     public String userName;
@@ -84,6 +86,7 @@ public class FeedActivity extends AppCompatActivity {
                     Log.i("navigation", "user button press");
                     Intent profileIntent = new Intent(FeedActivity.this, ProfileActivity.class);
                     profileIntent.putExtra("username", userName);
+//                    profileIntent.putExtra("user", user);
                     startActivity(profileIntent);
                     break;
             }
@@ -141,7 +144,8 @@ public class FeedActivity extends AppCompatActivity {
                 // add post that was clicked to intent, then start post viewer activity
                 Post selectedPost = (Post) adapterView.getAdapter().getItem(position);
                 viewPost.putExtra("selectedPost", selectedPost);
-                startActivity(viewPost);
+                viewPost.putExtra("user", user);
+                startActivityForResult(viewPost, VIEW_POST_REQUEST);
             }
         });
 
@@ -165,7 +169,13 @@ public class FeedActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Post post = dataSnapshot.getValue(Post.class);
 
+                // if post changed to sold, remove from posts array list
+                if (post.getIsSold()) {
+//                    postsArrayList.remove(postsArrayList.get());
+                    arrayAdapter.notifyDataSetChanged();
+                }
             }
 
             @Override
@@ -185,7 +195,6 @@ public class FeedActivity extends AppCompatActivity {
         };
 
 
-
         mFirebaseAuth = FirebaseAuth.getInstance();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -195,8 +204,17 @@ public class FeedActivity extends AppCompatActivity {
                     // user is signed in
                     setupUserSignedIn(user);
                 } else {
-                    setupUserSignedOut();
                     // user is signed out
+                    mPostDatabaseReference.removeEventListener(mPostChildEventListener);
+                    Intent intent = AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setIsSmartLockEnabled(false)
+                            .setAvailableProviders(
+                                    Arrays.asList(
+                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
+                                    )
+                            ).build();
+                    startActivityForResult(intent, SIGN_IN_REQUEST);
                 }
             }
         };
@@ -227,14 +245,24 @@ public class FeedActivity extends AppCompatActivity {
             if (data != null) {
                 Post resultPost = (Post) data.getSerializableExtra("new_post");
                 resultPost.setSeller(user);
-                mPostDatabaseReference.push().setValue(resultPost);
+                String uuid = resultPost.getUuid();
+                mPostDatabaseReference.child(uuid).setValue(resultPost); // add post to firebase
             }
+        }
+
+        // when PostViewer finishes from view, if post sold, remove from feed
+        if (requestCode == VIEW_POST_REQUEST && resultCode == Activity.RESULT_OK) {
+
+            Post sold_post = (Post) data.getSerializableExtra("sold_post");
+            Log.d("view ended", "onActivityResult: " + sold_post.getIsSold());
         }
     }
 
+
     @Override
     protected void onResume() {
-        super.onResume(); // attach the authstatelistener
+        super.onResume();
+        // attach the authstatelistener
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
@@ -242,13 +270,10 @@ public class FeedActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause(); // remove the authstatelistener
         mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-        postsArrayList.clear();
-        arrayAdapter.notifyDataSetChanged();
-        mPostDatabaseReference.removeEventListener(mPostChildEventListener);
+        setupUserSignedOut();
     }
 
     private void setupUserSignedIn(FirebaseUser user) {
-        Log.i("auth", user.getDisplayName());
 //        userName = user.getDisplayName(); // get the user's name
         this.user = new User(user.getDisplayName(), user.getEmail(), user.getPhoneNumber());
         this.userName = this.user.getFullName();
@@ -260,10 +285,6 @@ public class FeedActivity extends AppCompatActivity {
         postsArrayList.clear();
         arrayAdapter.notifyDataSetChanged();
         mPostDatabaseReference.removeEventListener(mPostChildEventListener);
-        mFirebaseAuth.signOut();
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
     }
 
     @Override
@@ -278,7 +299,7 @@ public class FeedActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_signout) {
-            mFirebaseAuth.signOut();
+            AuthUI.getInstance().signOut(this);
         }
         return super.onOptionsItemSelected(item);
     }

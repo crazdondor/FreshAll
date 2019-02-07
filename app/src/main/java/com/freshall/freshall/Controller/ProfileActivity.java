@@ -38,6 +38,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,8 +57,10 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     static final int REQUEST_IMAGE_CAPTURE = 0;
-    static final int WRITE_EXTERNAL_REQUEST = 0;
-    static final int CHOOSE_IMAGE = 101;
+//    static final int WRITE_EXTERNAL_REQUEST = 0;
+//    static final int CHOOSE_IMAGE = 101;
+
+    Uri uriProfileImage;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -113,53 +116,70 @@ public class ProfileActivity extends AppCompatActivity {
                 takePicture();
             }
         });
-        includesForCreateReference();
-        uploadImageToFirebase();
+//        includesForCreateReference();
+//        uploadImageToFirebase();
+//        showExistingPhotos();
     }
-    public void includesForCreateReference(){
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-
-        StorageReference storageRef = storage.getReference("gs://freshall-5c50e.appspot.com");
-        StorageReference imagesRef = storageRef.child("images");
-
-    }
+//    public void includesForCreateReference(){
+//        FirebaseStorage storage = FirebaseStorage.getInstance();
+//
+//        StorageReference storageRef = storage.getReference("gs://freshall-5c50e.appspot.com");
+//        StorageReference imagesRef = storageRef.child("images");
+//
+//    }
     private void takePicture(){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
-    public void takeAndSavePicture() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_REQUEST
-            );
-        } else {
-            // we have permission
-        }
-    }
-
-    private void showExistingPhotos(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Image"), CHOOSE_IMAGE);
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == WRITE_EXTERNAL_REQUEST) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // try again
-                takeAndSavePicture();
-            }
-            else {
-                Toast.makeText(this, "We need permission!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    private void uploadImageToFirebase(){
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference profileImage = FirebaseStorage.getInstance().getReference();
-    }
-
+//    public void takeAndSavePicture() {
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_REQUEST
+//            );
+//        } else {
+//            // we have permission
+//        }
+//    }
+//
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (requestCode == CHOOSE_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+//            uriProfileImage = data.getData();
+//            try{
+//                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriProfileImage);
+//                imageView.setImageBitmap(bitmap);
+//
+//            } catch (IOException e){
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+//
+//    private void showExistingPhotos(){
+//        Intent intent = new Intent();
+//        intent.setType("image/*");
+//        intent.setAction(Intent.ACTION_GET_CONTENT);
+//        startActivityForResult(Intent.createChooser(intent, "Select Image"), CHOOSE_IMAGE);
+//    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == WRITE_EXTERNAL_REQUEST) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // try again
+//                takeAndSavePicture();
+//            }
+//            else {
+//                Toast.makeText(this, "We need permission!", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
+//    private void uploadImageToFirebase(){
+//        FirebaseStorage storage = FirebaseStorage.getInstance();
+//        StorageReference profileImage = FirebaseStorage.getInstance().getReference();
+//    }
+//
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

@@ -84,7 +84,6 @@ public class FeedActivity extends AppCompatActivity {
                     Log.i("navigation", "user button press");
                     Intent profileIntent = new Intent(FeedActivity.this, ProfileActivity.class);
                     profileIntent.putExtra("username", userName);
-//                    profileIntent.putExtra("user", user);
                     startActivity(profileIntent);
                     break;
             }
@@ -196,17 +195,8 @@ public class FeedActivity extends AppCompatActivity {
                     // user is signed in
                     setupUserSignedIn(user);
                 } else {
+                    setupUserSignedOut();
                     // user is signed out
-                    mPostDatabaseReference.removeEventListener(mPostChildEventListener);
-                    Intent intent = AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setIsSmartLockEnabled(false)
-                            .setAvailableProviders(
-                                    Arrays.asList(
-                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
-                                    )
-                            ).build();
-                    startActivityForResult(intent, SIGN_IN_REQUEST);
                 }
             }
         };
@@ -252,10 +242,13 @@ public class FeedActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause(); // remove the authstatelistener
         mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-        setupUserSignedOut();
+        postsArrayList.clear();
+        arrayAdapter.notifyDataSetChanged();
+        mPostDatabaseReference.removeEventListener(mPostChildEventListener);
     }
 
     private void setupUserSignedIn(FirebaseUser user) {
+        Log.i("auth", user.getDisplayName());
 //        userName = user.getDisplayName(); // get the user's name
         this.user = new User(user.getDisplayName(), user.getEmail(), user.getPhoneNumber());
         this.userName = this.user.getFullName();
@@ -267,6 +260,10 @@ public class FeedActivity extends AppCompatActivity {
         postsArrayList.clear();
         arrayAdapter.notifyDataSetChanged();
         mPostDatabaseReference.removeEventListener(mPostChildEventListener);
+        mFirebaseAuth.signOut();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     @Override
@@ -281,7 +278,7 @@ public class FeedActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_signout) {
-            AuthUI.getInstance().signOut(this);
+            mFirebaseAuth.signOut();
         }
         return super.onOptionsItemSelected(item);
     }

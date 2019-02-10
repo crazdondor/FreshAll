@@ -27,6 +27,6 @@
     <string name="btnCam">Camera Button</string>
     <string-array name="quantity_type_spinner_values">
         <item>ea</item>
-        <item>lbs</item>
+        <item>kg</item>
     </string-array>
 </resources>

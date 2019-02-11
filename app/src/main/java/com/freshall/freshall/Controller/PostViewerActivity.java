@@ -113,30 +113,32 @@ public class PostViewerActivity extends AppCompatActivity {
 
     // when FAB is clicked to add to favorites, shows toast
     public void fab_clicked(View view) {
+        // if seller selects own post, FAB displays edit button
+        // on edit button clicked, send data from post to create_new_post to populate view
         currentUser = (User) feedIntent.getSerializableExtra("user");
-
-        // if seller selects own post, display edit button instead of favorites
-        // on edit button clicked, send data from post to create_new_post to populate with
         if (selectedPost.getSeller().getEmail().equals(currentUser.getEmail())) {
             Intent editPostIntent = new Intent(PostViewerActivity.this, CreateNewPostActivity.class);
             editPostIntent.putExtra("current_post", selectedPost);
             startActivityForResult(editPostIntent, EDIT_POST_REQUEST);
         }
 
-        // if not current user's post, add post to favorites
+        // if not current user's post, FAB displays favorite button
+        // on favorite button clicked, add post to favorites
+        // TODO: create favorites list and add selectedPost to list
         else {
             Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show();
         }
     }
+
     public void DeletePost(View view) {
     remove(selectedPost);
     finish();
     }
+
     public void remove(Post post){
         String uuid = post.getUuid();
         DatabaseReference removing  = FirebaseDatabase.getInstance().getReference("posts").child(uuid);
         removing.removeValue();
-
     }
 
     @Override
@@ -166,6 +168,7 @@ public class PostViewerActivity extends AppCompatActivity {
         selectedPost.setIsSold(true);
 //        Log.d("post sold", "markSold: marked as sold");
 
+        //return selectedpost to feed view to be removed
         Intent returnIntent = new Intent();
         returnIntent.putExtra("sold_post", selectedPost);
         setResult(RESULT_OK, returnIntent);

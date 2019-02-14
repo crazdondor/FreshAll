@@ -32,9 +32,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class FeedActivity extends AppCompatActivity {
@@ -52,6 +54,9 @@ public class FeedActivity extends AppCompatActivity {
     public ChildEventListener mPostChildEventListener;
     public FirebaseAuth mFirebaseAuth;
     public FirebaseAuth.AuthStateListener mAuthStateListener;
+    public final Query mPostsQuery = FirebaseDatabase.getInstance()
+            .getReference()
+            .child("posts").orderByChild("postDate");
 
     public TextView noPostsMessage;
     public ListView postsListView;
@@ -164,6 +169,7 @@ public class FeedActivity extends AppCompatActivity {
                 Post post = dataSnapshot.getValue(Post.class);
                 // add it to the list, notify adapter
                 postsArrayList.add(post);
+
                 arrayAdapter.notifyDataSetChanged();
             }
 
@@ -205,7 +211,7 @@ public class FeedActivity extends AppCompatActivity {
                     setupUserSignedIn(user);
                 } else {
                     // user is signed out
-                    mPostDatabaseReference.removeEventListener(mPostChildEventListener);
+                    mPostsQuery.removeEventListener(mPostChildEventListener);
                     Intent intent = AuthUI.getInstance()
                             .createSignInIntentBuilder()
                             .setIsSmartLockEnabled(false)
@@ -277,8 +283,7 @@ public class FeedActivity extends AppCompatActivity {
 //        userName = user.getDisplayName(); // get the user's name
         this.user = new User(user.getDisplayName(), user.getEmail(), user.getPhoneNumber());
         this.userName = this.user.getFullName();
-        mPostDatabaseReference
-                .addChildEventListener(mPostChildEventListener);
+        mPostsQuery.addChildEventListener(mPostChildEventListener);
     }
 
     private void setupUserSignedOut() {

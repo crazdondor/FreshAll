@@ -3,6 +3,9 @@ package com.freshall.freshall.Model;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -17,6 +20,7 @@ public class Post implements Serializable {
     private String pricePerQuantity;
     private Date harvestDate;
     private Date expirationDate;
+    private long postDate;
     private Boolean isSold;
 
     //DVC
@@ -32,6 +36,7 @@ public class Post implements Serializable {
         this.harvestDate = new Date(2000, 1, 1);
         this.expirationDate = new Date(2020, 1, 1);
         this.isSold = false;
+        this.postDate = 0;
     }
 
     //EVC
@@ -127,4 +132,10 @@ public class Post implements Serializable {
     public void setIsSold(Boolean isSold) {
         this.isSold = isSold;
     }
+
+    public long getPostDate() {
+        return postDate;
+    }
+
+    public void setPostDate(long postDate) { this.postDate = postDate; }
 }

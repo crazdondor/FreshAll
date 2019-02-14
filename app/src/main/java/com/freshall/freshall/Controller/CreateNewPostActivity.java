@@ -26,6 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -155,6 +158,10 @@ public class CreateNewPostActivity extends AppCompatActivity {
         }
 
         newPost.setIsSold(false);
+
+        long postDate = new Date().getTime();
+        postDate *= -1;
+        newPost.setPostDate(postDate);
 
         // return post to PostFeed activity
         if (postHasTitle) {

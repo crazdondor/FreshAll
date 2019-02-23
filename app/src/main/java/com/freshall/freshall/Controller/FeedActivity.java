@@ -116,9 +116,9 @@ public class FeedActivity extends AppCompatActivity {
         postsArrayList = new ArrayList<Post>();
 
         // create array adapter to display title and description of posts
-        // will need to make a custom array adapter probably to display photo + post descriptions
-
-        arrayAdapter = new ArrayAdapter<Post>(this, android.R.layout.simple_list_item_2, android.R.id.text1, postsArrayList){
+//        arrayAdapter = new FeedViewAdapter(this, postsArrayList)
+        arrayAdapter = new ArrayAdapter<Post>(this, R.layout.feedview_listitem,
+                android.R.id.text1, postsArrayList){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -251,8 +251,8 @@ public class FeedActivity extends AppCompatActivity {
         }
 
         // when PostViewer finishes from view, if post sold, remove from feed
+        // TODO: crashes here bc no post on return intent
         if (requestCode == VIEW_POST_REQUEST && resultCode == Activity.RESULT_OK) {
-
             Post sold_post = (Post) data.getSerializableExtra("sold_post");
             Log.d("view ended", "onActivityResult: " + sold_post.getIsSold());
         }

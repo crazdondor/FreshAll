@@ -18,6 +18,7 @@ public class Post implements Serializable {
     private Date harvestDate;
     private Date expirationDate;
     private Boolean isSold;
+    private long postDate;
 
     //DVC
     public Post() {
@@ -126,5 +127,13 @@ public class Post implements Serializable {
 
     public void setIsSold(Boolean isSold) {
         this.isSold = isSold;
+    }
+
+    public long getPostDate() {
+        return postDate;
+    }
+
+    public void setPostDate(long postDate) {
+        this.postDate = postDate;
     }
 }

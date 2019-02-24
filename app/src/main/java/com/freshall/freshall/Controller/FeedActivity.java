@@ -55,8 +55,8 @@ public class FeedActivity extends AppCompatActivity {
 
     public TextView noPostsMessage;
     public ListView postsListView;
-    public List<Post> postsArrayList;
-    public ArrayAdapter<Post> arrayAdapter;
+    public ArrayList<Post> postsArrayList;
+    public FeedViewAdapter arrayAdapter;
 
     // server side setup
     // 1. enable google authentication provider
@@ -116,20 +116,20 @@ public class FeedActivity extends AppCompatActivity {
         postsArrayList = new ArrayList<Post>();
 
         // create array adapter to display title and description of posts
-//        arrayAdapter = new FeedViewAdapter(this, postsArrayList)
-        arrayAdapter = new ArrayAdapter<Post>(this, R.layout.feedview_listitem,
-                android.R.id.text1, postsArrayList){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-
-                text1.setText(postsArrayList.get(position).getTitle());
-                text2.setText(postsArrayList.get(position).getDescription());
-                return view;
-            }
-        };
+        arrayAdapter = new FeedViewAdapter(this, R.layout.feedview_listitem, postsArrayList);
+//        arrayAdapter = new ArrayAdapter<Post>(this, R.layout.feedview_listitem,
+//                android.R.id.text1, postsArrayList){
+//            @Override
+//            public View getView(int position, View convertView, ViewGroup parent) {
+//                View view = super.getView(position, convertView, parent);
+//                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+//                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+//
+//                text1.setText(postsArrayList.get(position).getTitle());
+//                text2.setText(postsArrayList.get(position).getDescription());
+//                return view;
+//            }
+//        };
 
         // set array adapter
         postsListView.setAdapter(arrayAdapter);

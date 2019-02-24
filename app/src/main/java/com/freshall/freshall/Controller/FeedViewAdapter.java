@@ -14,8 +14,6 @@ import android.widget.TextView;
 import android.view.ViewGroup;
 
 import com.freshall.freshall.R;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -44,10 +42,6 @@ public class FeedViewAdapter extends ArrayAdapter<Post> {
 
 //        Later: get reference to photo saved by uuid in Firebase storage
         //postPhoto.setImageResource(currentPost.get);
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        StorageReference photo = storageRef.child(currentPost.getUuid()+".jpg");
-
         postPhoto.setImageResource(R.drawable.baseline_person_black_24dp);
 
         return customRow;

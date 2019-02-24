@@ -18,7 +18,6 @@ import com.freshall.freshall.R;
 import java.util.ArrayList;
 
 public class FeedViewAdapter extends ArrayAdapter<Post> {
-     ArrayList<Post> postArrayList = new ArrayList<>();
 
     // constructor
     public FeedViewAdapter(Context context, int textViewResourceId, ArrayList<Post> posts) {
@@ -40,7 +39,9 @@ public class FeedViewAdapter extends ArrayAdapter<Post> {
         postTitle.setText(currentPost.getTitle());
         postSeller.setText((CharSequence) currentPost.getSeller().toString());
         postDescription.setText(currentPost.getDescription());
-//        postPhoto.setImageResource(currentPost.get);
+
+//        Later: get reference to photo saved by uuid in Firebase storage
+        //postPhoto.setImageResource(currentPost.get);
         postPhoto.setImageResource(R.drawable.baseline_person_black_24dp);
 
         return customRow;

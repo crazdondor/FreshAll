@@ -60,7 +60,7 @@ public class FeedActivity extends AppCompatActivity {
     public TextView noPostsMessage;
     public ListView postsListView;
     public ArrayList<Post> postsArrayList;
-    public FeedViewAdapter arrayAdapter;
+    public ArrayAdapter<Post> arrayAdapter;
 
     // server side setup
     // 1. enable google authentication provider
@@ -243,6 +243,7 @@ public class FeedActivity extends AppCompatActivity {
 
         // when PostViewer finishes from view, if post sold, remove from feed
         if (requestCode == VIEW_POST_REQUEST && resultCode == Activity.RESULT_OK) {
+
             Post sold_post = (Post) data.getSerializableExtra("sold_post");
             Log.d("view ended", "onActivityResult: " + sold_post.getIsSold());
         }

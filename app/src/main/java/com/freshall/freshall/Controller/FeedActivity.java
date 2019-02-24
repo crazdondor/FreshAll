@@ -59,7 +59,7 @@ public class FeedActivity extends AppCompatActivity {
 
     public TextView noPostsMessage;
     public ListView postsListView;
-    public List<Post> postsArrayList;
+    public ArrayList<Post> postsArrayList;
     public ArrayAdapter<Post> arrayAdapter;
 
     // server side setup
@@ -120,20 +120,7 @@ public class FeedActivity extends AppCompatActivity {
         postsArrayList = new ArrayList<Post>();
 
         // create array adapter to display title and description of posts
-        // will need to make a custom array adapter probably to display photo + post descriptions
-
-        arrayAdapter = new ArrayAdapter<Post>(this, android.R.layout.simple_list_item_2, android.R.id.text1, postsArrayList){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-
-                text1.setText(postsArrayList.get(position).getTitle());
-                text2.setText(postsArrayList.get(position).getDescription());
-                return view;
-            }
-        };
+        arrayAdapter = new FeedViewAdapter(this, R.layout.feedview_listitem, postsArrayList);
 
         // set array adapter
         postsListView.setAdapter(arrayAdapter);

@@ -134,7 +134,10 @@ public class PostViewerActivity extends AppCompatActivity {
         remove(selectedPost);
         finish();
     }
-
+    public void DeleteOldPost(){
+        remove(selectedPost);
+        finish();
+    }
     public void remove(Post post){
         String uuid = post.getUuid();
         DatabaseReference removing  = FirebaseDatabase.getInstance().getReference("posts").child(uuid);
@@ -154,7 +157,9 @@ public class PostViewerActivity extends AppCompatActivity {
             if (data != null) {
                 Post resultPost = (Post) data.getSerializableExtra("new_post");
                 resultPost.setSeller(currentUser);
-                mPostDatabaseReference.push().setValue(resultPost);
+                String uuid = resultPost.getUuid();
+                DeleteOldPost();
+                mPostDatabaseReference.child(uuid).setValue(resultPost);
             }
             // after post is created, return to FeedView to open new post viewer
             setResult(RESULT_OK);

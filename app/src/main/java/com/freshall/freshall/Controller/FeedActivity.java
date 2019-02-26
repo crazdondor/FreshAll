@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -60,7 +61,8 @@ public class FeedActivity extends AppCompatActivity {
     public TextView noPostsMessage;
     public ListView postsListView;
     public ArrayList<Post> postsArrayList;
-    public ArrayAdapter<Post> arrayAdapter;
+    public PostsArrayAdapter arrayAdapter;
+    public SearchView searchModule;
 
     // server side setup
     // 1. enable google authentication provider
@@ -120,7 +122,7 @@ public class FeedActivity extends AppCompatActivity {
         postsArrayList = new ArrayList<Post>();
 
         // create array adapter to display title and description of posts
-        arrayAdapter = new FeedViewAdapter(this, R.layout.feedview_listitem, postsArrayList);
+        arrayAdapter = new PostsArrayAdapter(this, postsArrayList);
 
         // set array adapter
         postsListView.setAdapter(arrayAdapter);
@@ -209,6 +211,24 @@ public class FeedActivity extends AppCompatActivity {
                 }
             }
         };
+
+        searchModule = (SearchView) findViewById(R.id.searchBar);
+        searchModule.setIconifiedByDefault(false);
+        searchModule.setSubmitButtonEnabled(true);
+        searchModule.setQueryHint("Search");
+        searchModule.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                arrayAdapter.getFilter().filter(newText);
+                arrayAdapter.notifyDataSetChanged();
+                return true;
+            }
+        });
     }
 
     // when user clicks FAB to add new post, start intent for CreateNewPostActivity

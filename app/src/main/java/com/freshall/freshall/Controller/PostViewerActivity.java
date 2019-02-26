@@ -150,7 +150,6 @@ public class PostViewerActivity extends AppCompatActivity {
                 mFirebaseDatabase.getReference().child("posts");
 
         // on edit result, delete old post and create new one
-        // TODO: delete old post
         if (requestCode == EDIT_POST_REQUEST && resultCode == RESULT_OK) {
             if (data != null) {
                 Post resultPost = (Post) data.getSerializableExtra("new_post");
@@ -166,7 +165,6 @@ public class PostViewerActivity extends AppCompatActivity {
     //when mark as sold button is clicked, remove post from feed
     public void markSold(View view) {
         selectedPost.setIsSold(true);
-//        Log.d("post sold", "markSold: marked as sold");
 
         //return selectedpost to feed view to be removed
         Intent returnIntent = new Intent();

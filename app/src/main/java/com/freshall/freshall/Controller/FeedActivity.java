@@ -32,6 +32,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +53,9 @@ public class FeedActivity extends AppCompatActivity {
     public ChildEventListener mPostChildEventListener;
     public FirebaseAuth mFirebaseAuth;
     public FirebaseAuth.AuthStateListener mAuthStateListener;
+    public final Query mPostsQuery = FirebaseDatabase.getInstance()
+            .getReference()
+            .child("posts").orderByChild("postDate");
 
     public TextView noPostsMessage;
     public ListView postsListView;
@@ -117,19 +121,6 @@ public class FeedActivity extends AppCompatActivity {
 
         // create array adapter to display title and description of posts
         arrayAdapter = new FeedViewAdapter(this, R.layout.feedview_listitem, postsArrayList);
-//        arrayAdapter = new ArrayAdapter<Post>(this, R.layout.feedview_listitem,
-//                android.R.id.text1, postsArrayList){
-//            @Override
-//            public View getView(int position, View convertView, ViewGroup parent) {
-//                View view = super.getView(position, convertView, parent);
-//                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-//                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-//
-//                text1.setText(postsArrayList.get(position).getTitle());
-//                text2.setText(postsArrayList.get(position).getDescription());
-//                return view;
-//            }
-//        };
 
         // set array adapter
         postsListView.setAdapter(arrayAdapter);
@@ -205,7 +196,7 @@ public class FeedActivity extends AppCompatActivity {
                     setupUserSignedIn(user);
                 } else {
                     // user is signed out
-                    mPostDatabaseReference.removeEventListener(mPostChildEventListener);
+                    mPostsQuery.removeEventListener(mPostChildEventListener);
                     Intent intent = AuthUI.getInstance()
                             .createSignInIntentBuilder()
                             .setIsSmartLockEnabled(false)
@@ -251,7 +242,6 @@ public class FeedActivity extends AppCompatActivity {
         }
 
         // when PostViewer finishes from view, if post sold, remove from feed
-        // TODO: crashes here bc no post on return intent
         if (requestCode == VIEW_POST_REQUEST && resultCode == Activity.RESULT_OK) {
             Post sold_post = (Post) data.getSerializableExtra("sold_post");
             Log.d("view ended", "onActivityResult: " + sold_post.getIsSold());
@@ -277,14 +267,13 @@ public class FeedActivity extends AppCompatActivity {
 //        userName = user.getDisplayName(); // get the user's name
         this.user = new User(user.getDisplayName(), user.getEmail(), user.getPhoneNumber());
         this.userName = this.user.getFullName();
-        mPostDatabaseReference
-                .addChildEventListener(mPostChildEventListener);
+        mPostsQuery.addChildEventListener(mPostChildEventListener);
     }
 
     private void setupUserSignedOut() {
         postsArrayList.clear();
         arrayAdapter.notifyDataSetChanged();
-        mPostDatabaseReference.removeEventListener(mPostChildEventListener);
+        mPostsQuery.removeEventListener(mPostChildEventListener);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.freshall.freshall.Controller;
 
 import com.freshall.freshall.Model.Post;
+import com.freshall.freshall.Controller.PostsArrayAdapter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,13 +10,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.ListView;
+import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.design.widget.BottomNavigationView;
@@ -59,8 +64,10 @@ public class FeedActivity extends AppCompatActivity {
 
     public TextView noPostsMessage;
     public ListView postsListView;
-    public List<Post> postsArrayList;
-    public ArrayAdapter<Post> arrayAdapter;
+    public ArrayList<Post> postsArrayList;
+    public List<String> postsTitlesList;
+    public PostsArrayAdapter arrayAdapter;
+    public SearchView searchModule;
 
     // server side setup
     // 1. enable google authentication provider
@@ -122,18 +129,7 @@ public class FeedActivity extends AppCompatActivity {
         // create array adapter to display title and description of posts
         // will need to make a custom array adapter probably to display photo + post descriptions
 
-        arrayAdapter = new ArrayAdapter<Post>(this, android.R.layout.simple_list_item_2, android.R.id.text1, postsArrayList){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-
-                text1.setText(postsArrayList.get(position).getTitle());
-                text2.setText(postsArrayList.get(position).getDescription());
-                return view;
-            }
-        };
+        arrayAdapter = new PostsArrayAdapter(this, postsArrayList);
 
         // set array adapter
         postsListView.setAdapter(arrayAdapter);
@@ -152,7 +148,6 @@ public class FeedActivity extends AppCompatActivity {
                 startActivityForResult(viewPost, VIEW_POST_REQUEST);
             }
         });
-
         // initialize the firebase references
         mFirebaseDatabase =
                 FirebaseDatabase.getInstance();
@@ -222,6 +217,24 @@ public class FeedActivity extends AppCompatActivity {
                 }
             }
         };
+
+        searchModule = (SearchView) findViewById(R.id.searchBar);
+        searchModule.setIconifiedByDefault(false);
+        searchModule.setSubmitButtonEnabled(true);
+        searchModule.setQueryHint("Search");
+        searchModule.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                arrayAdapter.getFilter().filter(newText);
+                arrayAdapter.notifyDataSetChanged();
+                return true;
+            }
+        });
     }
 
     // when user clicks FAB to add new post, start intent for CreateNewPostActivity

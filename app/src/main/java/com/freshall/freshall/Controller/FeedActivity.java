@@ -215,6 +215,7 @@ public class FeedActivity extends AppCompatActivity {
         searchModule = (SearchView) findViewById(R.id.searchBar);
         searchModule.setIconifiedByDefault(false);
         searchModule.setSubmitButtonEnabled(true);
+        searchModule.setFocusable(false);
         searchModule.setQueryHint("Search");
         searchModule.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

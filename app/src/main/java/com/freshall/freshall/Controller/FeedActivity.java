@@ -87,11 +87,14 @@ public class FeedActivity extends AppCompatActivity {
                 case R.id.nav_message:
                     Log.i("navigation", "message button press");
 //                    mTextMessage.setText(R.string.title_notifications);
+//                    Intent messagingIntent = new Intent(FeedActivity.this, MessagingActivity.class);
+//                    messagingIntent.putExtra("userName", userName);
+//                    startActivity(messagingIntent);
                     break;
                 case R.id.nav_user:
                     Log.i("navigation", "user button press");
                     Intent profileIntent = new Intent(FeedActivity.this, ProfileActivity.class);
-                    profileIntent.putExtra("username", userName);
+                    profileIntent.putExtra("userName", userName);
 //                    profileIntent.putExtra("user", user);
                     startActivity(profileIntent);
                     break;

@@ -26,7 +26,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:11.4.2'
     implementation 'com.google.firebase:firebase-auth:11.4.2'
     implementation 'com.firebaseui:firebase-ui-auth:3.1.0'
+
     implementation 'com.google.firebase:firebase-storage:11.4.2'
+
     testImplementation 'junit:junit:4.12'
     implementation 'com.google.android.gms:play-services-maps:11.4.2'
     implementation 'com.google.android.gms:play-services-location:11.4.2'

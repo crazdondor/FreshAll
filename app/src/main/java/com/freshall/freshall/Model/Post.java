@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Post implements Serializable {
+
     private String uuid;
     private String title;
     private String description;
@@ -22,6 +23,7 @@ public class Post implements Serializable {
 
     //DVC
     public Post() {
+
         this.uuid = UUID.randomUUID().toString();
         this.title = "title";
         this.description = "description";
@@ -44,9 +46,17 @@ public class Post implements Serializable {
         this.quantityType = quantityType;
     }
 
+    //Getters and Setters
+
+    public Boolean getSold() { return isSold; }
+
+    public void setSold(Boolean sold) { isSold = sold; }
+
     public String getUuid() {
         return uuid;
     }
+
+    public void setUuid(String uuid) { this.uuid = uuid; }
 
     public String getTitle() {
         return title;
@@ -75,7 +85,6 @@ public class Post implements Serializable {
     public String getQuantity() {
         return quantity;
     }
-
 
     public void setQuantity(String quantity) {
         this.quantity = quantity;

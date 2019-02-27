@@ -1,12 +1,19 @@
-package com.freshall.freshall.Controller;
+package com.freshall.freshall.Model;
+
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 /**
  * Created by Quin on 10/28/18.
  */
 
 public class ChatMessage {
+
+    private int profilePicture;
     private String author;
     private String content;
+    private Date dateTime;
 
     public ChatMessage() {
         author = "BLANK AUTHOR";
@@ -32,6 +39,14 @@ public class ChatMessage {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public int getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(int profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     @Override

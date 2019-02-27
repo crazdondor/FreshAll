@@ -1,5 +1,8 @@
 package com.freshall.freshall.Model;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -10,10 +13,11 @@ public class User implements Serializable {
     String email;
     String phone;
 
+
     // constructors
     public User() {
         this.fullName = "First Last";
-        this.email = "firstlast";
+        this.email = "firstlast@email.com";
         this.phone = "5551231234";
     }
 

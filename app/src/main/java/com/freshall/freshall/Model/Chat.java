@@ -4,43 +4,36 @@ import java.util.ArrayList;
 
 public class Chat {
     // fields
-    User user1;
-    User user2;
-    ArrayList<Message> messages = new ArrayList<Message>();
+    User myPhone;
+    User theirPhone;
+    ArrayList<ChatMessage> messages = new ArrayList<ChatMessage>();
 
     // constructor
-    public Chat(User user1, User user2, ArrayList<Message> messages) {
-        this.user1 = user1;
-        this.user2 = user2;
+    public Chat(User myPhone, User theirPhone, ArrayList<ChatMessage> messages) {
+        this.myPhone = myPhone;
+        this.theirPhone = theirPhone;
         this.messages = messages;
     }
 
     // getters and setters
-    public User getUser1() {
-        return user1;
+    public User getMyPhone() {
+        return myPhone;
     }
 
-    public void setUser1(User user1) {
-        this.user1 = user1;
+    public void setMyPhone(User myPhone) {
+        this.myPhone = myPhone;
     }
 
-    public User getUser2() {
-        return user2;
+    public User getTheirPhone() {
+        return theirPhone;
     }
 
-    public void setUser2(User user2) {
-        this.user2 = user2;
+    public void setTheirPhone(User theirPhone) {
+        this.theirPhone = theirPhone;
     }
 
-    public ArrayList<Message> getMessages() {
+    public ArrayList<ChatMessage> getMessages() {
         return messages;
     }
 
-    public void setMessages(ArrayList<Message> messages) {
-        this.messages = messages;
-    }
-
-    void sendMessage(Message message){}
-
-    void deleteChat(){}
 }

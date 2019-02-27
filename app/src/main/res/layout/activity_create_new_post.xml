@@ -62,7 +62,7 @@
                     android:id="@+id/price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="$20" />
+                    android:hint="20MT" />
             </LinearLayout>
 
             <LinearLayout
@@ -76,7 +76,7 @@
                     android:layout_weight="1"
                     android:text="@string/Location"/>
 
-                <TextView
+                <EditText
                     android:id="@+id/locationText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -109,24 +109,6 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/harvestDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
-                android:text="Harvested on:" />
-
-            <TextView
-                android:id="@+id/expirationDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="5dp"
-                android:text="Expected expiration on:" />
 
             <EditText
                 android:id="@+id/description"

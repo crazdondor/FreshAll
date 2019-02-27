@@ -87,7 +87,7 @@ public class CreateNewPostActivity extends AppCompatActivity {
             EditText priceEditor = (EditText) findViewById(R.id.price);
             priceEditor.setText(selectedPost.getPricePerQuantity());
 
-            TextView locationEditor = (TextView) findViewById(R.id.locationText);
+            EditText locationEditor = (EditText) findViewById(R.id.locationText);
             locationEditor.setText(selectedPost.getLocation());
 
             EditText quantityEditor = (EditText) findViewById(R.id.quantityNumber);

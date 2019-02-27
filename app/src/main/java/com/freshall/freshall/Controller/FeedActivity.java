@@ -273,7 +273,7 @@ public class FeedActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause(); // remove the authstatelistener
         mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-        setupUserSignedOut();
+        //setupUserSignedOut();
     }
 
     private void setupUserSignedIn(FirebaseUser user) {

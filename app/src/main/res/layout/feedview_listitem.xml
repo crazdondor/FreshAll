@@ -34,7 +34,7 @@
             android:layout_height="match_parent"
             android:text="@string/nav_user"
             android:textSize="12sp"
-         />
+            />
 
         <TextView
             android:id="@+id/post_description"

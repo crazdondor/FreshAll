@@ -34,10 +34,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -47,6 +50,7 @@ public class FeedActivity extends AppCompatActivity {
     static final int VIEW_POST_REQUEST = 10;
 
     private User user;
+    private FirebaseUser mUser;
     public String userName;
 
     public FirebaseDatabase mFirebaseDatabase;
@@ -103,6 +107,7 @@ public class FeedActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("ONCREATE", "ONCREATE STARTING");
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
@@ -153,6 +158,7 @@ public class FeedActivity extends AppCompatActivity {
         mPostChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.i("Added child", dataSnapshot.getValue(Post.class).getTitle());
                 // dataSnapshot stores the Post
                 Post post = dataSnapshot.getValue(Post.class);
                 // add it to the list, notify adapter
@@ -167,7 +173,7 @@ public class FeedActivity extends AppCompatActivity {
                 // if post changed to sold, remove from posts array list
                 if (post.getIsSold()) {
 //                    postsArrayList.remove(postsArrayList.get());
-                    arrayAdapter.notifyDataSetChanged();
+                    //arrayAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -188,6 +194,7 @@ public class FeedActivity extends AppCompatActivity {
         };
 
 
+
         mFirebaseAuth = FirebaseAuth.getInstance();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -197,8 +204,17 @@ public class FeedActivity extends AppCompatActivity {
                     // user is signed in
                     setupUserSignedIn(user);
                 } else {
-                    setupUserSignedOut();
                     // user is signed out
+                    mPostsQuery.removeEventListener(mPostChildEventListener);
+                    Intent intent = AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setIsSmartLockEnabled(false)
+                            .setAvailableProviders(
+                                    Arrays.asList(
+                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
+                                    )
+                            ).build();
+                    startActivityForResult(intent, SIGN_IN_REQUEST);
                 }
             }
         };
@@ -250,6 +266,7 @@ public class FeedActivity extends AppCompatActivity {
                 resultPost.setSeller(user);
                 String uuid = resultPost.getUuid();
                 mPostDatabaseReference.child(uuid).setValue(resultPost); // add post to firebase
+                arrayAdapter.notifyDataSetChanged();
             }
         }
 
@@ -260,7 +277,6 @@ public class FeedActivity extends AppCompatActivity {
             Log.d("view ended", "onActivityResult: " + sold_post.getIsSold());
         }
     }
-
 
     @Override
     protected void onResume() {
@@ -273,7 +289,7 @@ public class FeedActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause(); // remove the authstatelistener
         mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-        //setupUserSignedOut();
+        setupUserSignedOut();
     }
 
     private void setupUserSignedIn(FirebaseUser user) {
@@ -281,18 +297,15 @@ public class FeedActivity extends AppCompatActivity {
 //        userName = user.getDisplayName(); // get the user's name
         this.user = new User(user.getDisplayName(), user.getEmail(), user.getPhoneNumber());
         this.userName = this.user.getFullName();
-        mPostDatabaseReference
+        mPostsQuery
                 .addChildEventListener(mPostChildEventListener);
     }
 
     private void setupUserSignedOut() {
+        userName = "Anonymous";
         postsArrayList.clear();
         arrayAdapter.notifyDataSetChanged();
-        mPostDatabaseReference.removeEventListener(mPostChildEventListener);
-        mFirebaseAuth.signOut();
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        mPostsQuery.removeEventListener(mPostChildEventListener);
     }
 
     @Override

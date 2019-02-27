@@ -1,7 +1,10 @@
 package com.freshall.freshall.Controller;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +16,14 @@ import android.widget.TextView;
 
 import com.freshall.freshall.Model.Post;
 import com.freshall.freshall.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -94,7 +104,7 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        PostHolder holder;
+        final  PostHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.feedview_listitem, parent, false);
             holder = new PostHolder();
@@ -111,7 +121,31 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
         holder.description.setText(postArrayList.get(position).getDescription());
         holder.seller.setText((CharSequence) postArrayList.get(position).getSeller().getFullName());
 
-        holder.photo.setImageResource(R.drawable.baseline_person_black_24dp);
+        StorageReference storageReference = FirebaseStorage.getInstance()
+                .getReferenceFromUrl("gs://freshall-5c50e.appspot.com");
+        StorageReference photoRef = storageReference.child("images/posts/"
+                + postArrayList.get(position).getUuid()
+                + ".jpg");
+
+        try {
+            final File localFile = File.createTempFile("images", "jpg");
+
+            photoRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    String filePath = localFile.getPath();
+                    Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                    holder.photo.setImageBitmap(bitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    holder.photo.setImageResource(R.drawable.baseline_add_box_black_24dp);
+                }
+            });
+        } catch (IOException io) {
+
+        }
 
         return convertView;
     }

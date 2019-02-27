@@ -3,9 +3,16 @@ package com.freshall.freshall.Controller;
 import com.freshall.freshall.Model.User;
 import com.freshall.freshall.R;
 import com.freshall.freshall.Model.Post;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,9 +25,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 public class PostViewerActivity extends AppCompatActivity {
@@ -109,6 +119,33 @@ public class PostViewerActivity extends AppCompatActivity {
         // set user text
         TextView sellerText = (TextView) findViewById(R.id.sellerName);
         sellerText.setText(selectedPost.getSeller().getFullName());
+
+        StorageReference storageReference = FirebaseStorage.getInstance()
+                .getReferenceFromUrl("gs://freshall-5c50e.appspot.com");
+        StorageReference photoRef = storageReference.child("images/posts/"
+                + selectedPost.getUuid()
+                + ".jpg");
+
+        try {
+            final File localFile = File.createTempFile("images", "jpg");
+            final ImageView imageView =  (ImageView) findViewById(R.id.postPhoto);
+
+            photoRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    String filePath = localFile.getPath();
+                    Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                    imageView.setImageBitmap(bitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    imageView.setImageResource(R.drawable.baseline_add_box_black_24dp);
+                }
+            });
+        } catch (IOException io) {
+
+        }
     }
 
     // when FAB is clicked to add to favorites, shows toast

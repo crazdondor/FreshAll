@@ -197,17 +197,8 @@ public class FeedActivity extends AppCompatActivity {
                     // user is signed in
                     setupUserSignedIn(user);
                 } else {
+                    setupUserSignedOut();
                     // user is signed out
-                    mPostsQuery.removeEventListener(mPostChildEventListener);
-                    Intent intent = AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setIsSmartLockEnabled(false)
-                            .setAvailableProviders(
-                                    Arrays.asList(
-                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
-                                    )
-                            ).build();
-                    startActivityForResult(intent, SIGN_IN_REQUEST);
                 }
             }
         };
@@ -286,16 +277,22 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void setupUserSignedIn(FirebaseUser user) {
+        Log.i("auth", user.getDisplayName());
 //        userName = user.getDisplayName(); // get the user's name
         this.user = new User(user.getDisplayName(), user.getEmail(), user.getPhoneNumber());
         this.userName = this.user.getFullName();
-        mPostsQuery.addChildEventListener(mPostChildEventListener);
+        mPostDatabaseReference
+                .addChildEventListener(mPostChildEventListener);
     }
 
     private void setupUserSignedOut() {
         postsArrayList.clear();
         arrayAdapter.notifyDataSetChanged();
-        mPostsQuery.removeEventListener(mPostChildEventListener);
+        mPostDatabaseReference.removeEventListener(mPostChildEventListener);
+        mFirebaseAuth.signOut();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     @Override

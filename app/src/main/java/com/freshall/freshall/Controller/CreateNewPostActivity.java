@@ -42,22 +42,23 @@ import java.util.List;
 import java.util.Locale;
 
 public class CreateNewPostActivity extends AppCompatActivity {
+//    variables:
     boolean postHasTitle;
     Post selectedPost;
     private ImageView postPhotoView;
     private ProgressDialog progressDialog;
     private Uri filePath;
-
     private FusedLocationProviderClient mFusedLocationClient;
-
     static final int REQUEST_LOCATION = 1;
     private static final  int PICK_IMAGE_REQUEST = 2;
 
+//
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_post);
 
+//        get reference to photo view and set on click listener to allow user to select a photo
         postPhotoView = (ImageView) findViewById(R.id.postPhoto);
         postPhotoView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +67,7 @@ public class CreateNewPostActivity extends AppCompatActivity {
             }
         });
 
-        // set adapter to populate quantity type spinner
+//         set adapter to populate quantity type spinner
         Spinner quantityTypeSpinner = (Spinner) findViewById(R.id.quantityType);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.quantity_type_spinner_values, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -77,32 +78,7 @@ public class CreateNewPostActivity extends AppCompatActivity {
         selectedPost = (Post) editIntent.getSerializableExtra("current_post");
 
         if (selectedPost != null) {
-
-            EditText titleEditor = (EditText) findViewById(R.id.titleText);
-            titleEditor.setText(selectedPost.getTitle());
-
-            EditText descriptionEditor = (EditText) findViewById(R.id.description);
-            descriptionEditor.setText(selectedPost.getDescription());
-
-            EditText priceEditor = (EditText) findViewById(R.id.price);
-            priceEditor.setText(selectedPost.getPricePerQuantity());
-
-            EditText locationEditor = (EditText) findViewById(R.id.locationText);
-            locationEditor.setText(selectedPost.getLocation());
-
-            EditText quantityEditor = (EditText) findViewById(R.id.quantityNumber);
-            quantityEditor.setText(selectedPost.getQuantity());
-
-            postPhotoView = (ImageView) findViewById(R.id.postPhoto);
-            if (postPhotoView.getDrawable() != null) {
-                uploadPhoto(selectedPost);
-            }
-
-            // setSelection takes int value
-            // TODO: figure out how to determine int value from String quantityType in Post obj
-//        Spinner quantityTypeEditor = (Spinner) findViewById(R.id.quantityType);
-//        quantityTypeEditor.setSelection(0);
-
+            populateFields(selectedPost);
         }
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -128,11 +104,47 @@ public class CreateNewPostActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * When photo view clicked, starts activity to select photo saved on phone
+     */
     private void showFileChooser() {
         Intent intent  = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    /**
+     * Gets reference to XML views and sets values using values from current post
+     */
+    private void populateFields(Post currentPost) {
+        EditText titleEditor = (EditText) findViewById(R.id.titleText);
+        titleEditor.setText(selectedPost.getTitle());
+
+        EditText descriptionEditor = (EditText) findViewById(R.id.description);
+        descriptionEditor.setText(selectedPost.getDescription());
+
+        EditText priceEditor = (EditText) findViewById(R.id.price);
+        priceEditor.setText(selectedPost.getPricePerQuantity());
+
+        EditText locationEditor = (EditText) findViewById(R.id.locationText);
+        locationEditor.setText(selectedPost.getLocation());
+
+        EditText quantityEditor = (EditText) findViewById(R.id.quantityNumber);
+        quantityEditor.setText(selectedPost.getQuantity());
+
+        postPhotoView = (ImageView) findViewById(R.id.postPhoto);
+        if (postPhotoView.getDrawable() != null) {
+            uploadPhoto(selectedPost);
+        }
+
+//        for quantity type spinner, setSelection() takes int value
+//          gets reference to array adapter (strings list) to get position of saved string
+        Spinner quantityTypeEditor = (Spinner) findViewById(R.id.quantityType);
+        String postQuantityType = selectedPost.getQuantityType();
+        int qtPosition = ((ArrayAdapter<String>)quantityTypeEditor.getAdapter()).getPosition(postQuantityType);
+        quantityTypeEditor.setSelection(qtPosition);
+
     }
 
     @Override
@@ -149,13 +161,20 @@ public class CreateNewPostActivity extends AppCompatActivity {
         }
     }
 
-    // when cancel button is clicked, finish activity without saving data
+    /**
+     * when cancel button is clicked, finish activity without saving data
+     * @param view
+     */
     public void cancelPost(View view) {
         setResult(RESULT_OK, null);
         finish();
     }
 
-    // when confirm button is clicked, create new post object with entered fields
+    /**
+     * when confirm button is clicked, create new post object with entered fields
+     * if no title, post will not be created (toast message appears)
+     * @param view
+     */
     public void createPost(View view) {
         Post newPost = new Post();
 
@@ -167,6 +186,7 @@ public class CreateNewPostActivity extends AppCompatActivity {
             postHasTitle = true;
         } else {
             postHasTitle = false;
+
         }
 
         postPhotoView = (ImageView) findViewById(R.id.postPhoto);
@@ -209,13 +229,16 @@ public class CreateNewPostActivity extends AppCompatActivity {
             newPost.setQuantityType(quantityType);
         }
 
+        //post not yet sold
         newPost.setIsSold(false);
 
+        // set post date to current date
         long postDate = new Date().getTime();
         postDate *= -1;
         newPost.setPostDate(postDate);
 
-        // return post to PostFeed activity
+        // if post has title, return it to PostFeed activity,
+        //  else, toast message to user
         if (postHasTitle) {
             Intent returnIntent = new Intent();
             returnIntent.putExtra("new_post", newPost);
@@ -226,6 +249,10 @@ public class CreateNewPostActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     *
+     * @param location
+     */
     private void setLocationText(Location location) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 
@@ -252,6 +279,10 @@ public class CreateNewPostActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     *
+     * @param newPost
+     */
     private void uploadPhoto(Post newPost) {
         //if there is a file to upload
         if (filePath != null) {

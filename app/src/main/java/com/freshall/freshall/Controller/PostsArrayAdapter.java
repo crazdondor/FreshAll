@@ -64,7 +64,7 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
                         for (final Post post : original) {
                             if (post.getTitle().toLowerCase().contains(constraint.toString()) ||
                                     post.getSeller().getFullName().toLowerCase().contains(constraint.toString()) ||
-                                    post.getDescription().toLowerCase().contains(constraint.toString())) {
+                                    post.getDescription().toLowerCase().startsWith(constraint.toString())) {
                                 results.add(post);
                             }
                         }

@@ -62,7 +62,7 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
                 if (constraint != null) {
                     if (original != null && original.size() > 0) {
                         for (final Post post : original) {
-                            if (post.getTitle().toLowerCase().startsWith(constraint.toString()) ||
+                            if (post.getTitle().toLowerCase().contains(constraint.toString()) ||
                                     post.getSeller().getFullName().toLowerCase().startsWith(constraint.toString()) ||
                                     post.getDescription().toLowerCase().startsWith(constraint.toString())) {
                                 results.add(post);

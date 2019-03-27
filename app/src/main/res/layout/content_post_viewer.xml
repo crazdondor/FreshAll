@@ -93,22 +93,6 @@
                 android:text="Quantity: 4 cups" />
 
             <TextView
-                android:id="@+id/harvestDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
-                android:text="Harvested on: 4 November 2018" />
-
-            <TextView
-                android:id="@+id/expirationDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
-                android:text="Expected expiration on: 12 November 2018" />
-
-            <TextView
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

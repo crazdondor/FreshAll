@@ -35,15 +35,6 @@ public class Post implements Serializable {
         this.isSold = false;
     }
 
-    //EVC
-    public Post(String title, String description, String location, String quantity, String quantityType, String pricePerQuantity, Date harvestDate, Date expirationDate) {
-        this.title = title;
-        this.description = description;
-        this.location = location;
-        this.quantity = quantity;
-        this.quantityType = quantityType;
-    }
-
     public String getUuid() {
         return uuid;
     }

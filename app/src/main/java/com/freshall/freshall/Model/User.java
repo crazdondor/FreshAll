@@ -11,21 +11,18 @@ public class User implements Serializable {
     String fullName;
     String email;
     String phone;
-    ArrayList<Post> favorites;
 
     // constructors
     public User() {
         this.fullName = "First Last";
         this.email = "firstlast";
         this.phone = "5551231234";
-        this.favorites = new ArrayList<Post>();
     }
 
-    public User(String fullName, String email, String phone, ArrayList<Post>... favorites) {
+    public User(String fullName, String email, String phone) {
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
-//        favorites is optional (for now) - will need to delete old users to implement
     }
 
     // getters and setters
@@ -53,14 +50,6 @@ public class User implements Serializable {
         this.phone = phone;
     }
 
-    public ArrayList<Post> getFavorites() {
-        return favorites;
-    }
-
-    public void setFavorites(ArrayList<Post> favorites) {
-        this.favorites = favorites;
-    }
-
     //methods
     void makePost(String postText){}
 
@@ -74,4 +63,5 @@ public class User implements Serializable {
     public String toString() {
         return fullName;
     }
+
 }

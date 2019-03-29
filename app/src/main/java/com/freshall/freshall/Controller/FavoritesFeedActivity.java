@@ -31,27 +31,31 @@ public class FavoritesFeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites_feed);
 
-        Intent profileIntent = getIntent();
-        user = (User) profileIntent.getSerializableExtra("user");
+//        Intent profileIntent = getIntent();
+//        user = (User) profileIntent.getSerializableExtra("user");
+//
+//        ListView postsListView = (ListView) findViewById(R.id.postsList);
+//        TextView noPostsMessage = (TextView) findViewById(R.id.noPostsText);
+//
+//        ArrayList<Post> postsArrayList;
+//        if (user != null) {
+//            postsArrayList = user.getFavorites();
+//        }
+//        else {
+//            postsArrayList = new ArrayList<>();
+//        }
+//
+//        // create array adapter to display title and description of posts
+//        PostsArrayAdapter arrayAdapter = new PostsArrayAdapter(this, postsArrayList);
+//
+//        // set array adapter
+//        try {
+//            postsListView.setAdapter(arrayAdapter);
+//        }
+//        catch (Exception e) {
+//        }
 
-        ListView postsListView = (ListView) findViewById(R.id.postsList);
-        TextView noPostsMessage = (TextView) findViewById(R.id.noPostsText);
-
-        ArrayList<Post> postsArrayList = user.getFavorites();
-        Log.d(TAG, "onCreate: " + postsArrayList);
-
-        // create array adapter to display title and description of posts
-        PostsArrayAdapter arrayAdapter = new PostsArrayAdapter(this, postsArrayList);
-
-        // set array adapter
-        try {
-            postsListView.setAdapter(arrayAdapter);
-        }
-        catch (Exception e) {
-            Log.d(TAG, "onCreate: " + "cannot set adapter");
-        }
-
-        // set list item click listener to open post viewer activity
+//         set list item click listener to open post viewer activity
 //        postsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
 //            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {

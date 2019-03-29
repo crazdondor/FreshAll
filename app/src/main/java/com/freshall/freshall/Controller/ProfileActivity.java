@@ -57,6 +57,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     ImageView imageView;
 
+    String TAG = "profile";
 
     static final int REQUEST_IMAGE_CAPTURE = 0;
 //    static final int WRITE_EXTERNAL_REQUEST = 0;
@@ -209,6 +210,7 @@ public class ProfileActivity extends AppCompatActivity {
     public void goToFavorites(View view) {
         Intent favoritesIntent = new Intent(this, FavoritesFeedActivity.class);
         favoritesIntent.putExtra("user", user);
+        Log.d(TAG, "goToFavorites: user = " + user);
         startActivity(favoritesIntent);
     }
 }

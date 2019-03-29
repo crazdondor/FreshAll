@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class PostViewerActivity extends AppCompatActivity {
@@ -42,6 +43,7 @@ public class PostViewerActivity extends AppCompatActivity {
     User currentUser;
     public FirebaseDatabase mFirebaseDatabase;
     public DatabaseReference mPostDatabaseReference;
+    public DatabaseReference mFavoritesDatabaseReference;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -161,8 +163,11 @@ public class PostViewerActivity extends AppCompatActivity {
 
         // if not current user's post, FAB displays favorite button
         // on favorite button clicked, add post to favorites
-        // TODO: create favorites list and add selectedPost to list
         else {
+            mFavoritesDatabaseReference = mFirebaseDatabase.getReference().child("favorites");
+            String user_email = currentUser.getEmail();
+            mFavoritesDatabaseReference.child(user_email).setValue(selectedPost.getUuid());
+
             Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show();
         }
     }
@@ -190,7 +195,6 @@ public class PostViewerActivity extends AppCompatActivity {
                 mFirebaseDatabase.getReference().child("posts");
 
         // on edit result, delete old post and create new one
-        // TODO: delete old post
         if (requestCode == EDIT_POST_REQUEST && resultCode == RESULT_OK) {
             if (data != null) {
                 Post resultPost = (Post) data.getSerializableExtra("new_post");

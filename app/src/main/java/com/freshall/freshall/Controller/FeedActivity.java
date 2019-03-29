@@ -68,6 +68,7 @@ public class FeedActivity extends AppCompatActivity {
     public PostsArrayAdapter arrayAdapter;
     public SearchView searchModule;
 
+    private String TAG = "feed";
     // server side setup
     // 1. enable google authentication provider
     // 2. return the default values for db read/write
@@ -272,9 +273,10 @@ public class FeedActivity extends AppCompatActivity {
 
         // when PostViewer finishes from view, if post sold, remove from feed
         if (requestCode == VIEW_POST_REQUEST && resultCode == Activity.RESULT_OK) {
-
-            Post sold_post = (Post) data.getSerializableExtra("sold_post");
-            Log.d("view ended", "onActivityResult: " + sold_post.getIsSold());
+            if (data.getSerializableExtra("sold_post") != null) {
+                Post sold_post = (Post) data.getSerializableExtra("sold_post");
+                Log.d("view ended", "onActivityResult: " + sold_post.getIsSold());
+            }
         }
     }
 

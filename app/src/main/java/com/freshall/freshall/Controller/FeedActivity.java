@@ -96,7 +96,7 @@ public class FeedActivity extends AppCompatActivity {
                     Log.i("navigation", "user button press");
                     Intent profileIntent = new Intent(FeedActivity.this, ProfileActivity.class);
                     profileIntent.putExtra("username", userName);
-//                    profileIntent.putExtra("user", user);
+                    profileIntent.putExtra("user", user);
                     startActivity(profileIntent);
                     break;
             }

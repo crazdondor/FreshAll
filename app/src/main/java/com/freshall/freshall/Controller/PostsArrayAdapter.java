@@ -89,6 +89,9 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
 
     @Override
     public int getCount() {
+        if (postArrayList == null) {
+            return 0;
+        }
         return postArrayList.size();
     }
 

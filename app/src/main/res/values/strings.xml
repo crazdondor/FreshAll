@@ -41,5 +41,6 @@
     <string name="prof_pic">Profile Picture</string>
     <string name="Name">Name</string>
     <string name="btnCam">Camera Button</string>
+    <string name="my_favorites">My Favorites</string>
 
 </resources>

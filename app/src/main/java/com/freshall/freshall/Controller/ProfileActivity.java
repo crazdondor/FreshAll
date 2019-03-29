@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.freshall.freshall.Model.Post;
+import com.freshall.freshall.Model.User;
 import com.freshall.freshall.R;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -49,6 +50,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ArrayAdapter<Post> arrayAdapter;
     private ListView listView;
     private String username;
+    private User user;
 
     private DatabaseReference mPostDatabaseReference;
     public ChildEventListener mPostChildEventListener;
@@ -94,8 +96,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
+        // unpack intent variables
         Intent feedIntent = getIntent();
         username = (String) feedIntent.getStringExtra("username");
+        user = (User) feedIntent.getSerializableExtra("user");
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -196,5 +200,15 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void captureImage(View camButton){
 
+    }
+
+    /**
+     * When user clicks "My Favorites" button on profile, starts favorites feed activity
+     * @param view
+     */
+    public void goToFavorites(View view) {
+        Intent favoritesIntent = new Intent(this, FavoritesFeedActivity.class);
+        favoritesIntent.putExtra("user", user);
+        startActivity(favoritesIntent);
     }
 }

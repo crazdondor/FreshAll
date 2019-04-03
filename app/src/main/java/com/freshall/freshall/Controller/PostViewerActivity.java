@@ -73,6 +73,8 @@ public class PostViewerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_viewer);
 
@@ -164,9 +166,13 @@ public class PostViewerActivity extends AppCompatActivity {
         // if not current user's post, FAB displays favorite button
         // on favorite button clicked, add post to favorites
         else {
-            mFavoritesDatabaseReference = mFirebaseDatabase.getReference().child("favorites");
-            String user_email = currentUser.getEmail();
-            mFavoritesDatabaseReference.child(user_email).setValue(selectedPost.getUuid());
+            // can't use email because contains '.'
+            // for now, assuming full name is unique
+//            String user_email = currentUser.getEmail();
+            String user_name = currentUser.getFullName();
+
+            mFavoritesDatabaseReference = mFirebaseDatabase.getReference().child("favorites").push();
+            mFavoritesDatabaseReference.child(user_name).setValue(selectedPost.getUuid());
 
             Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show();
         }

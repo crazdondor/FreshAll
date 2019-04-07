@@ -103,7 +103,6 @@ public class FavoritesFeedActivity extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 // dataSnapshot stores the Post
                 HashMap<String, Object> favorites_entry = (HashMap<String, Object>) dataSnapshot.getValue();
-//                Log.d(TAG, "onChildAdded: " + userName);
 
                 // if favorites post belongs to current user, get the post
                 // add post to the list, notify adapter
@@ -111,13 +110,13 @@ public class FavoritesFeedActivity extends AppCompatActivity {
                     Collection values = favorites_entry.values();
 
                     for (Object value : values) {
-                        String value_string = value.toString();
+                        final String value_string = value.toString();
 
                         Query query = mFirebaseDatabase.getReference().child("posts").orderByKey().equalTo(value_string);
                         query.addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                Log.d(TAG, "onChildAdded: " + dataSnapshot.getChildren());
+                                Log.d(TAG, "onChildAdded: " + dataSnapshot.child(value_string));
 //                                Post post = (Post) dataSnapshot;
                             }
 
@@ -142,7 +141,7 @@ public class FavoritesFeedActivity extends AppCompatActivity {
                             }
                         });
 
-                        Log.d(TAG, "onChildAdded: " + value_string);
+//                        Log.d(TAG, "onChildAdded: " + value_string);
                     }
 
                 }

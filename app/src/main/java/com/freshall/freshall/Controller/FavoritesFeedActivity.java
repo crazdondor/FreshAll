@@ -44,6 +44,9 @@ public class FavoritesFeedActivity extends AppCompatActivity {
     public FirebaseDatabase mFirebaseDatabase;
     public DatabaseReference mFavoritesDatabaseReference;
     public DatabaseReference mPostDatabaseReference;
+    public final Query mPostsQuery = FirebaseDatabase.getInstance()
+            .getReference()
+            .child("posts");
 
     ArrayList<Post> postsArrayList;
     PostsArrayAdapter arrayAdapter;
@@ -92,10 +95,10 @@ public class FavoritesFeedActivity extends AppCompatActivity {
             }
         });
 
-        // get references to database
+        // get references to Firebase favorites database
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFavoritesDatabaseReference = mFirebaseDatabase.getReference().child("favorites");
-        mPostDatabaseReference = mFirebaseDatabase.getReference().child("posts");
+//        mPostDatabaseReference = mFirebaseDatabase.getReference().child("posts");
 
         // define database listener for items added to favorites
         mPostChildEventListener = new ChildEventListener() {
@@ -104,10 +107,12 @@ public class FavoritesFeedActivity extends AppCompatActivity {
                 // dataSnapshot stores the Post
                 HashMap<String, Object> favorites_entry = (HashMap<String, Object>) dataSnapshot.getValue();
 
+                Log.d(TAG, "onChildAdded: " + favorites_entry.entrySet());
                 // if favorites post belongs to current user, get the post
                 // add post to the list, notify adapter
                 if (favorites_entry.keySet().contains(userName)){
-                    Collection values = favorites_entry.values();
+                    Collection values_collection = favorites_entry.values();
+                    Object[] values = values_collection.toArray();
 
                     for (Object value : values) {
                         final String value_string = value.toString();
@@ -117,6 +122,7 @@ public class FavoritesFeedActivity extends AppCompatActivity {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                 Log.d(TAG, "onChildAdded: " + dataSnapshot.child(value_string));
+                                Log.d(TAG, "onChildAdded: " + mPostsQuery);
 //                                Post post = (Post) dataSnapshot;
                             }
 
@@ -141,7 +147,6 @@ public class FavoritesFeedActivity extends AppCompatActivity {
                             }
                         });
 
-//                        Log.d(TAG, "onChildAdded: " + value_string);
                     }
 
                 }
@@ -174,6 +179,7 @@ public class FavoritesFeedActivity extends AppCompatActivity {
 
         // attach listener
         mFavoritesDatabaseReference.addChildEventListener(mPostChildEventListener);
+//        mPostsQuery.addChildEventListener(mPostChildEventListener);
     }
 
 }

@@ -167,12 +167,12 @@ public class PostViewerActivity extends AppCompatActivity {
         // on favorite button clicked, add post to favorites
         else {
             // can't use email because contains '.'
-            // for now, assuming full name is unique
+            // for now, assuming full name is unique - when merged with dev, use user uid
 //            String user_email = currentUser.getEmail();
             String user_name = currentUser.getFullName();
 
             mFavoritesDatabaseReference = mFirebaseDatabase.getReference().child("favorites").push();
-            mFavoritesDatabaseReference.child(user_name).setValue(selectedPost.getUuid());
+            mFavoritesDatabaseReference.child(user_name).setValue(selectedPost);
 
             Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show();
         }

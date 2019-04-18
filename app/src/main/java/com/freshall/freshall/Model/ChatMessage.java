@@ -1,56 +1,54 @@
 package com.freshall.freshall.Model;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
 /**
- * Created by Quin on 10/28/18.
+ * Created by Quin on 3/28/19.
  */
 
 public class ChatMessage {
 
-    private int profilePicture;
-    private String author;
+    private String senderID;
+    private String fullName;
     private String content;
-    private Date dateTime;
+    private Timestamp createdAt;
 
     public ChatMessage() {
-        author = "BLANK AUTHOR";
+        senderID = "senderID";
+        fullName = "First Last";
         content = "BLANK CONTENT";
+        createdAt = new Timestamp(System.currentTimeMillis());
     }
 
-    public ChatMessage(String author, String content) {
-        this.author = author;
+    public ChatMessage(String senderID, String fullName, String content, Timestamp createdAt) {
+        this.senderID = senderID;
+        this.fullName = fullName;
         this.content = content;
+        this.createdAt = createdAt;
     }
 
-    public String getAuthor() {
-        return author;
-    }
+    public String getSenderID() { return senderID; }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+    public void setSenderID(String senderID) { this.senderID = senderID; }
 
-    public String getContent() {
-        return content;
-    }
+    public String getFullName() { return fullName; }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public int getProfilePicture() {
-        return profilePicture;
-    }
+    public String getContent() { return content; }
 
-    public void setProfilePicture(int profilePicture) {
-        this.profilePicture = profilePicture;
-    }
+    public void setContent(String content) { this.content = content; }
+
+    public Timestamp getCreatedAt() { return createdAt; }
+
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
 
     @Override
     public String toString() {
-        return "From: " + author + "\n" + content;
+        return "From ID: " + senderID + "\n" + content + "\n" + createdAt;
     }
 }
+

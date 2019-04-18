@@ -61,6 +61,7 @@ public class CreateNewPostActivity extends AppCompatActivity {
 
         // get view from layout
         postPhotoView = (ImageView) findViewById(R.id.postPhoto);
+
         // set listener for photo upload
         postPhotoView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +82,7 @@ public class CreateNewPostActivity extends AppCompatActivity {
 
         if (selectedPost != null) {
 
-            EditText titleEditor = (EditText) findViewById(R.id.titleText);
+            EditText titleEditor = (EditText) findViewById(R.id.postNameLable);
             titleEditor.setText(selectedPost.getTitle());
 
             EditText descriptionEditor = (EditText) findViewById(R.id.description);
@@ -95,6 +96,11 @@ public class CreateNewPostActivity extends AppCompatActivity {
 
             EditText quantityEditor = (EditText) findViewById(R.id.quantityNumber);
             quantityEditor.setText(selectedPost.getQuantity());
+
+            postPhotoView = (ImageView) findViewById(R.id.postPhoto);
+            if (postPhotoView.getDrawable() != null){
+                uploadPhoto(selectedPost);
+            }
 
             // setSelection takes int value
             // TODO: figure out how to determine int value from String quantityType in Post obj
@@ -137,7 +143,7 @@ public class CreateNewPostActivity extends AppCompatActivity {
         Post newPost = new Post();
 
         // if title text exists, add to new post
-        EditText titleEditor = (EditText) findViewById(R.id.titleText);
+        EditText titleEditor = (EditText) findViewById(R.id.postNameLable);
         String title = titleEditor.getText().toString();
         if (!title.equals("")) { // if not empty
             newPost.setTitle(title);
@@ -266,7 +272,7 @@ public class CreateNewPostActivity extends AppCompatActivity {
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageReference = storage.getReferenceFromUrl("gs://freshall-5c50e.appspot.com");
-            StorageReference photoRef = storageReference.child("images/posts/" + newPost.getUuid() + ".jpg");
+            StorageReference photoRef = storageReference.child("images/posts/" + newPost.getPostID() + ".jpg");
 
             photoRef.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

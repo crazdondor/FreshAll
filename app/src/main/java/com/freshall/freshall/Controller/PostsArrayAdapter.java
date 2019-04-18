@@ -122,12 +122,11 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
         holder.description.setText(postArrayList.get(position).getDescription());
         holder.seller.setText((CharSequence) postArrayList.get(position).getSeller().getFullName());
 
-        holder.photo.setImageResource(R.drawable.baseline_person_black_24dp);
         // set Imageview image
         StorageReference storageReference = FirebaseStorage.getInstance()
                 .getReferenceFromUrl("gs://freshall-5c50e.appspot.com");
         StorageReference photoRef = storageReference.child("images/posts/"
-                + postArrayList.get(position).getUuid()
+                + postArrayList.get(position).getPostID()
                 + ".jpg");
 
         try {

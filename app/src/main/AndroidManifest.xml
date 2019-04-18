@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
@@ -29,7 +28,12 @@
         <activity android:name=".Controller.PostViewerActivity" />
         <activity android:name=".Controller.ProfileActivity" />
         <activity android:name=".Controller.LoginActivity" />
-        <activity android:name=".Controller.RegisterActivity"/>
+        <activity android:name=".Controller.RegisterActivity" />
+        <activity android:name=".Controller.MessagingActivity" />
+        <activity
+            android:name=".Controller.ConversationListActivity"
+            android:label="@string/title_activity_messages"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

@@ -8,7 +8,8 @@ import java.util.UUID;
 
 public class Post implements Serializable {
 
-    private String uuid;
+    private String postID;
+    private String sellerID;
     private String title;
     private String description;
     private User seller;
@@ -24,7 +25,7 @@ public class Post implements Serializable {
     //DVC
     public Post() {
 
-        this.uuid = UUID.randomUUID().toString();
+        this.postID = UUID.randomUUID().toString();
         this.title = "title";
         this.description = "description";
         this.seller = new User();
@@ -32,31 +33,38 @@ public class Post implements Serializable {
         this.quantity = "0";
         this.quantityType = "each";
         this.pricePerQuantity = "negotiable";
-        this.harvestDate = new Date(2000, 1, 1);
-        this.expirationDate = new Date(2020, 1, 1);
         this.isSold = false;
     }
 
     //EVC
-    public Post(String title, String description, String location, String quantity, String quantityType, String pricePerQuantity, Date harvestDate, Date expirationDate) {
+    public Post(String title, String description, String location, String quantity, String quantityType, String pricePerQuantity) {
         this.title = title;
         this.description = description;
         this.location = location;
         this.quantity = quantity;
         this.quantityType = quantityType;
+        this.pricePerQuantity = pricePerQuantity;
     }
 
     //Getters and Setters
+
+    public String getSellerID() {
+        return sellerID;
+    }
+
+    public void setSellerID(String sellerID) {
+        this.sellerID = sellerID;
+    }
 
     public Boolean getSold() { return isSold; }
 
     public void setSold(Boolean sold) { isSold = sold; }
 
-    public String getUuid() {
-        return uuid;
+    public String getPostID() {
+        return postID;
     }
 
-    public void setUuid(String uuid) { this.uuid = uuid; }
+    public void setPostID(String postID) { this.postID = postID; }
 
     public String getTitle() {
         return title;

@@ -4,65 +4,53 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class User implements Serializable {
 
-    // fields
-    String fullName;
-    String email;
-    String phone;
+
+    private String fullName;
+    private String userID;
+    private String email;
+    private String phone;
+    private ArrayList<Conversation> conversationArrayList;
 
 
     // constructors
     public User() {
         this.fullName = "First Last";
+        this.userID = "userID";
         this.email = "firstlast@email.com";
         this.phone = "5551231234";
     }
 
-    public User(String fullName, String email, String phone) {
+    public User(String fullName, String userID, String email, String phone) {
         this.fullName = fullName;
+        this.userID = userID;
         this.email = email;
         this.phone = phone;
     }
 
-    // getters and setters
-    public String getFullName() {
-        return fullName;
-    }
 
-    public void setFirstName(String fullName) {
-        this.fullName = fullName;
-    }
+    public String getUserID() { return userID; }
 
-    public String getEmail() {
-        return email;
-    }
+    public void setUserID(String userID) { this.userID = userID; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getFullName() { return fullName; }
 
-    public String getPhone() {
-        return phone;
-    }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+    public String getEmail() { return email; }
 
-    //methods
-    void makePost(String postText){}
+    public void setEmail(String email) { this.email = email; }
 
-    void addFriend(User potentialFriend){}
+    public String getPhone() { return phone; }
 
-    void removeFriend(User exFriend){}
+    public void setPhone(String phone) { this.phone = phone; }
 
-    void createChat(User chatFriend){}
+
 
     @Override
-    public String toString() {
-        return fullName;
-    }
+    public String toString() { return "Full Name: " + fullName + " \n UserID: " + userID; }
 }

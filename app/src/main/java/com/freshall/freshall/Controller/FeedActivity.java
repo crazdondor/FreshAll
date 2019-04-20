@@ -3,6 +3,8 @@ package com.freshall.freshall.Controller;
 import com.freshall.freshall.Model.Post;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -26,6 +28,8 @@ import android.widget.AdapterView;
 import com.firebase.ui.auth.AuthUI;
 import com.freshall.freshall.Model.User;
 import com.freshall.freshall.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -321,6 +325,39 @@ public class FeedActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_signout) {
             AuthUI.getInstance().signOut(this);
+        } else if (id == R.id.action_deleteaccount) {
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(FeedActivity.this);
+            dialog.setTitle("Are you sure?");
+            dialog.setMessage("Deleting your account will completely remove your ability to use the app. " +
+                    "Are you sure you want to delete your account?");
+            dialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int which) {
+                    FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                    user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(FeedActivity.this, "Account Deleted Successfully", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(FeedActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            });
+
+            dialog.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int which) {
+                    dialogInterface.dismiss();
+                }
+            });
+
+            AlertDialog alertDialog = dialog.create();
+            alertDialog.show();
+
         }
         return super.onOptionsItemSelected(item);
     }

@@ -84,7 +84,7 @@ public class PostViewerActivity extends AppCompatActivity {
         currentUser = (User) feedIntent.getSerializableExtra("user");
 
         // if user clicked own post, FAB is edit button and mark sold button visible
-        if (selectedPost.getSeller().getEmail().equals(currentUser.getEmail())) {
+        if (selectedPost.getSellerEmail().equals(currentUser.getEmail())) {
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.favorite);
             fab.setImageResource(R.drawable.ic_edit);
 
@@ -118,7 +118,7 @@ public class PostViewerActivity extends AppCompatActivity {
 
         // set user text
         TextView sellerText = (TextView) findViewById(R.id.sellerName);
-        sellerText.setText(selectedPost.getSeller().getFullName());
+        sellerText.setText(selectedPost.getSeller());
 
         StorageReference storageReference = FirebaseStorage.getInstance()
                 .getReferenceFromUrl("gs://freshall-5c50e.appspot.com");
@@ -153,7 +153,7 @@ public class PostViewerActivity extends AppCompatActivity {
         // if seller selects own post, FAB displays edit button
         // on edit button clicked, send data from post to create_new_post to populate view
         currentUser = (User) feedIntent.getSerializableExtra("user");
-        if (selectedPost.getSeller().getEmail().equals(currentUser.getEmail())) {
+        if (selectedPost.getSellerEmail().equals(currentUser.getEmail())) {
             Intent editPostIntent = new Intent(PostViewerActivity.this, CreateNewPostActivity.class);
             editPostIntent.putExtra("current_post", selectedPost);
             startActivityForResult(editPostIntent, EDIT_POST_REQUEST);
@@ -194,7 +194,8 @@ public class PostViewerActivity extends AppCompatActivity {
         if (requestCode == EDIT_POST_REQUEST && resultCode == RESULT_OK) {
             if (data != null) {
                 Post resultPost = (Post) data.getSerializableExtra("new_post");
-                resultPost.setSeller(currentUser);
+                resultPost.setSeller(currentUser.getFullName());
+                resultPost.setSellerEmail(currentUser.getEmail());
                 String uuid = resultPost.getUuid();
                 DeleteOldPost();
                 mPostDatabaseReference.child(uuid).setValue(resultPost);

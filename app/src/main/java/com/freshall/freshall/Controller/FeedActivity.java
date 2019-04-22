@@ -4,9 +4,13 @@ import com.freshall.freshall.Model.Post;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -39,9 +43,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,6 +78,8 @@ public class FeedActivity extends AppCompatActivity {
     public final Query mPostsQuery = FirebaseDatabase.getInstance()
             .getReference()
             .child("posts").orderByChild("postDate");
+
+    private ConnectivityManager connectivityManager;
 
     public TextView noPostsMessage;
     public ListView postsListView;
@@ -128,7 +143,7 @@ public class FeedActivity extends AppCompatActivity {
         postsListView = (ListView) findViewById(R.id.postsList);
         noPostsMessage = (TextView) findViewById(R.id.noPostsText);
 
-        postsArrayList = new ArrayList<Post>();
+        loadData();
 
         // create array adapter to display title and description of posts
         arrayAdapter = new PostsArrayAdapter(this, postsArrayList);
@@ -159,69 +174,39 @@ public class FeedActivity extends AppCompatActivity {
                 mFirebaseDatabase.getReference()
                         .child("posts");
 
-        mPostChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.i("Added child", dataSnapshot.getValue(Post.class).getTitle());
-                // dataSnapshot stores the Post
-                Post post = dataSnapshot.getValue(Post.class);
-                // add it to the list, notify adapter
-                postsArrayList.add(post);
-                arrayAdapter.notifyDataSetChanged();
-            }
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            // online mode, attach listeners
+            mPostChildEventListener = setChildEventListener();
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Post post = dataSnapshot.getValue(Post.class);
-
-                // if post changed to sold, remove from posts array list
-                if (post.getIsSold()) {
-//                    postsArrayList.remove(postsArrayList.get());
-                    //arrayAdapter.notifyDataSetChanged();
+            mFirebaseAuth = FirebaseAuth.getInstance();
+            mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+                @Override
+                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    if (user != null) {
+                        // user is signed in
+                        setupUserSignedIn(user);
+                    } else {
+                        // user is signed out
+                        mPostsQuery.removeEventListener(mPostChildEventListener);
+                        Intent intent = AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setIsSmartLockEnabled(false)
+                                .setAvailableProviders(
+                                        Arrays.asList(
+                                                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
+                                        )
+                                ).build();
+                        startActivityForResult(intent, SIGN_IN_REQUEST);
+                    }
                 }
-            }
+            };
+        } else {
+            // offline mode, restore feed from savedInstanceState
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-
-
-
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // user is signed in
-                    setupUserSignedIn(user);
-                } else {
-                    // user is signed out
-                    mPostsQuery.removeEventListener(mPostChildEventListener);
-                    Intent intent = AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setIsSmartLockEnabled(false)
-                            .setAvailableProviders(
-                                    Arrays.asList(
-                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
-                                    )
-                            ).build();
-                    startActivityForResult(intent, SIGN_IN_REQUEST);
-                }
-            }
-        };
+        }
 
         searchModule = (SearchView) findViewById(R.id.searchBar);
         searchModule.setIconifiedByDefault(false);
@@ -249,6 +234,40 @@ public class FeedActivity extends AppCompatActivity {
         startActivityForResult(goToNewPost, NEW_ITEM_REQUEST);
     }
 
+    protected ChildEventListener setChildEventListener() {
+        return new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.i("Added child", dataSnapshot.getValue(Post.class).getTitle());
+                // dataSnapshot stores the Post
+                Post post = dataSnapshot.getValue(Post.class);
+                // add it to the list, notify adapter
+                postsArrayList.add(post);
+                arrayAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -267,7 +286,8 @@ public class FeedActivity extends AppCompatActivity {
         if (requestCode == NEW_ITEM_REQUEST && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 Post resultPost = (Post) data.getSerializableExtra("new_post");
-                resultPost.setSeller(user);
+                resultPost.setSeller(user.getFullName());
+                resultPost.setSellerEmail(user.getEmail());
                 String uuid = resultPost.getUuid();
                 mPostDatabaseReference.child(uuid).setValue(resultPost); // add post to firebase
                 arrayAdapter.notifyDataSetChanged();
@@ -286,14 +306,69 @@ public class FeedActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // attach the authstatelistener
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+        } else {
+            Log.i("DataSaving", "loading data");
+            SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+            Gson gson = new Gson();
+            String json = sharedPreferences.getString("postList", null);
+            Type type = new TypeToken<ArrayList<Post>>() {}.getType();
+            postsArrayList = gson.fromJson(json, type);
+
+            if (postsArrayList.isEmpty()) {
+                Log.i("DataSaving", "empty list");
+            }
+
+            if (postsArrayList == null) {
+                Log.i("DataSaving", "null list");
+                postsArrayList = new ArrayList<Post>();
+            }
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause(); // remove the authstatelistener
-        mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-        setupUserSignedOut();
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+            setupUserSignedOut();
+        }
+        saveData();
+
+    }
+
+    private void saveData() {
+        Log.i("DataSaving", "saving data");
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(postsArrayList);
+        editor.putString("postList", json);
+        editor.apply();
+        Log.i("DataSaving", "jsonData = " + json);
+    }
+
+    private void loadData() {
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            postsArrayList = new ArrayList<>();
+        } else {
+            Log.i("DataSaving", "loading data");
+            SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+            Gson gson = new Gson();
+            String json = sharedPreferences.getString("post list", null);
+            Type type = new TypeToken<ArrayList<Post>>() {}.getType();
+            postsArrayList = gson.fromJson(json, type);
+
+            if (postsArrayList == null) {
+                Log.i("DataSaving", "null list");
+                postsArrayList = new ArrayList<Post>();
+            }
+        }
     }
 
     private void setupUserSignedIn(FirebaseUser user) {
@@ -307,8 +382,8 @@ public class FeedActivity extends AppCompatActivity {
 
     private void setupUserSignedOut() {
         userName = "Anonymous";
-        postsArrayList.clear();
-        arrayAdapter.notifyDataSetChanged();
+        //postsArrayList.clear();
+        //arrayAdapter.notifyDataSetChanged();
         mPostsQuery.removeEventListener(mPostChildEventListener);
     }
 

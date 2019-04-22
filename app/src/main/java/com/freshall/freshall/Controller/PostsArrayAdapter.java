@@ -63,7 +63,7 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
                     if (original != null && original.size() > 0) {
                         for (final Post post : original) {
                             if (post.getTitle().toLowerCase().contains(constraint.toString()) ||
-                                    post.getSeller().getFullName().toLowerCase().startsWith(constraint.toString()) ||
+                                    post.getSeller().toLowerCase().startsWith(constraint.toString()) ||
                                     post.getDescription().toLowerCase().startsWith(constraint.toString())) {
                                 results.add(post);
                             }
@@ -119,7 +119,7 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
         }
         holder.title.setText(postArrayList.get(position).getTitle());
         holder.description.setText(postArrayList.get(position).getDescription());
-        holder.seller.setText((CharSequence) postArrayList.get(position).getSeller().getFullName());
+        holder.seller.setText((CharSequence) postArrayList.get(position).getSeller());
 
         StorageReference storageReference = FirebaseStorage.getInstance()
                 .getReferenceFromUrl("gs://freshall-5c50e.appspot.com");

@@ -64,6 +64,8 @@ public class PostViewerActivity extends AppCompatActivity {
                 case R.id.nav_user:
                     Log.i("navigation", "user button press");
                     Intent profileIntent = new Intent(PostViewerActivity.this, ProfileActivity.class);
+                    profileIntent.putExtra("username", currentUser.getFullName());
+                    profileIntent.putExtra("user", currentUser);
                     startActivity(profileIntent);
                     return true;
             }
@@ -166,15 +168,18 @@ public class PostViewerActivity extends AppCompatActivity {
         // if not current user's post, FAB displays favorite button
         // on favorite button clicked, add post to favorites
         else {
-            // can't use email because contains '.'
+            // can't use email as value in Firebase because contains '.'
             // for now, assuming full name is unique - when merged with dev, use user uid
 //            String user_email = currentUser.getEmail();
             String user_name = currentUser.getFullName();
 
             mFavoritesDatabaseReference = mFirebaseDatabase.getReference().child("favorites").push();
-            mFavoritesDatabaseReference.child(user_name).setValue(selectedPost);
+            mFavoritesDatabaseReference.child(user_name).setValue(selectedPost.getUuid());
 
             Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show();
+
+            //TODO: add code to change button and remove post from favorites if already in favorites
+            // currently will continue adding it to favorites
         }
     }
 

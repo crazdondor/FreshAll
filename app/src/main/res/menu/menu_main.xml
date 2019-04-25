@@ -12,5 +12,10 @@
         android:orderInCategory="200"
         android:title="@string/action_signout"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_deleteaccount"
+        android:orderInCategory="300"
+        android:title="@string/DeleteAccount"
+        app:showAsAction="never" />
 
 </menu>

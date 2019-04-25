@@ -124,6 +124,14 @@ public class ProfileActivity extends AppCompatActivity {
 //        includesForCreateReference();
 //        uploadImageToFirebase();
 //        showExistingPhotos();
+
+        Button favoritesButton = (Button) findViewById(R.id.favoritesButton);
+        favoritesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToFavorites(view);
+            }
+        });
     }
 //    public void includesForCreateReference(){
 //        FirebaseStorage storage = FirebaseStorage.getInstance();

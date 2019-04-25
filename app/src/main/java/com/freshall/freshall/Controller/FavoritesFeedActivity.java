@@ -54,17 +54,19 @@ public class FavoritesFeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_favorites_feed);
 
         // get user's full name to check against in Firebase
+        // eventually change to checking for a more unique value
         Intent profileIntent = getIntent();
         try {
             user = (User) profileIntent.getSerializableExtra("user");
             userName = user.getFullName();
         }
         catch (Exception e) {
+            Log.d(TAG, "Exception:" + e);
             Toast.makeText(this, "No user available", Toast.LENGTH_SHORT).show();
             finish();
         }
 
-        // get references to view
+        // get reference to ListView
         ListView postsListView = (ListView) findViewById(R.id.postsList);
 
         // initialize posts array list
@@ -99,9 +101,9 @@ public class FavoritesFeedActivity extends AppCompatActivity {
         mFavoritesQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                Post post = dataSnapshot.getValue(Post.class);
-                Log.d(TAG, "onDataChange: post = " + post.getDescription());
+                // as data in firebase favorites changes
+                Post post = (Post) dataSnapshot.getValue(Post.class);
+                Log.d(TAG, "onDataChange: post = " + post.getTitle());
             }
 
             @Override

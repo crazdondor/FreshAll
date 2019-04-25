@@ -18,6 +18,7 @@
     <string name="action_signout">Sign Out</string>
     <string name="Email_EditText">Email</string>
     <string name="Password_EditText">Password</string>
+    <string name="DeleteAccount">Delete Account</string>
 
     <!--Feed-->
     <string name="no_posts">No posts available</string>

@@ -7,20 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".Controller.ProfileActivity">
 
-    <TextView
-        android:id="@+id/nameText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp"
-        android:paddingTop="10dp"
-        android:text="@string/Name"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
@@ -32,37 +18,36 @@
         app:menu="@menu/menu_navigation">
 
     </android.support.design.widget.BottomNavigationView>
-
-
-    <ScrollView
-        android:id="@+id/scrollView2"
-        android:layout_width="match_parent"
-        android:layout_height="399dp"
-        android:isScrollContainer="true"
-        android:verticalScrollbarPosition="defaultPosition"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
         <LinearLayout
+            android:id="@+id/profileLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView">
 
+            <TextView
+                android:id="@+id/nameText"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:paddingTop="10dp"
+                android:text="@string/Name"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageView
                 android:id="@+id/profpic"
                 android:layout_width="125dp"
                 android:layout_height="116dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/baseline_person_black_24dp"
                 android:contentDescription="@string/prof_pic"
-                app:layout_constraintBottom_toTopOf="@id/nameText"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintVertical_bias="0.062"
@@ -74,15 +59,17 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="0dp"
-                android:layout_weight="1"
                 android:onClick="captureImage"
                 android:text="@string/btnCam" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/userPosts"
+            <ListView
+                android:id="@+id/profilePostsList"
                 android:layout_width="match_parent"
-                android:layout_height="221dp" />
+                android:layout_height="match_parent"></ListView>
+
         </LinearLayout>
-    </ScrollView>
+
+
+
 
 </android.support.constraint.ConstraintLayout>

@@ -33,6 +33,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -46,13 +47,18 @@ public class ProfileActivity extends AppCompatActivity {
 
     private ArrayList<Post> allPosts;
     private ArrayList<Post> userPosts;
-    private ArrayAdapter<Post> arrayAdapter;
     private ListView listView;
     private String username;
-
+    public FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mPostDatabaseReference;
-    public ChildEventListener mPostChildEventListener;
+    public ChildEventListener mProfileChildEventListener;
 
+    public ListView profileListView;
+    public ArrayList<Post> profileArrayList;
+    public PostsArrayAdapter arrayAdapter;
+    public final Query mPostsQuery = FirebaseDatabase.getInstance()
+            .getReference()
+            .child("posts").orderByChild("postDate");
     ImageView imageView;
 
 
@@ -100,8 +106,53 @@ public class ProfileActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        TextView nameText = (TextView) findViewById(R.id.nameText);
+        final TextView nameText = (TextView) findViewById(R.id.nameText);
         nameText.setText(username);
+
+
+        profileListView = (ListView) findViewById(R.id.profilePostsList);
+        profileArrayList = new ArrayList<Post>();
+
+        arrayAdapter = new PostsArrayAdapter(this,profileArrayList);
+        profileListView.setAdapter(arrayAdapter);
+
+
+        mProfileChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Post post = dataSnapshot.getValue(Post.class);
+                Log.i("Added profile child", dataSnapshot.getValue(Post.class).getTitle());
+                if(post.getSeller().getFullName().equals(nameText.getText().toString())){
+                    profileArrayList.add(post);
+                    arrayAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        };
+
+        Toast.makeText(this, "Profile Activity", Toast.LENGTH_SHORT).show();
+
+        mPostsQuery.addChildEventListener(mProfileChildEventListener);
 
         Menu menu = navigation.getMenu();
         MenuItem menuItem = menu.getItem(2);
@@ -116,6 +167,7 @@ public class ProfileActivity extends AppCompatActivity {
                 takePicture();
             }
         });
+
 //        includesForCreateReference();
 //        uploadImageToFirebase();
 //        showExistingPhotos();
@@ -194,7 +246,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    public void captureImage(View camButton){
-
+    @Override
+    public void onDestroy() {
+        mPostsQuery.removeEventListener(mProfileChildEventListener);
+        super.onDestroy();
     }
 }

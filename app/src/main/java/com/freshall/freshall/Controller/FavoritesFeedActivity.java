@@ -97,23 +97,6 @@ public class FavoritesFeedActivity extends AppCompatActivity {
         mFavoritesDatabaseReference = mFirebaseDatabase.getReference().child("favorites");
         mPostDatabaseReference = mFirebaseDatabase.getReference().child("posts");
 
-        //
-        mFavoritesQuery.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // as data in firebase favorites changes
-                Post post = (Post) dataSnapshot.getValue(Post.class);
-                Log.d(TAG, "onDataChange: post = " + post.getTitle());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // getting post failed, log a messageLog.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                Toast.makeText(FavoritesFeedActivity.this, "Failed to load post",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
         // define database listener for items added to favorites
         mPostChildEventListener = new ChildEventListener() {
             @Override
@@ -127,16 +110,23 @@ public class FavoritesFeedActivity extends AppCompatActivity {
                     // get reference to values for given key
                     Collection<String> values_collection = favorites_entry.values();
 
-                    //values_collection should have one object (a post)
+                    //values_collection should have one object (uuid of a post)
                     for (String value : values_collection) {
                         try {
+                            // use value (uuid of post) to get Post object
                             DatabaseReference reference = FirebaseDatabase.getInstance()
                                     .getReference()
-                                    .child(value).child("description");
+                                    .child(value);
 
-                            Log.d(TAG, "onChildAdded: " + FirebaseDatabase.getInstance()
-                                    .getReference()
-                                    .child(value).child("description"));
+                            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                            DatabaseReference profileRef = rootRef.child("favorites");
+
+                            // order by email and then find the specific email
+                            Query query = profileRef.orderByChild("uuid").equalTo(value);
+
+                            // Do a one time read of that email
+
+                            Log.d(TAG, "onChildAdded: query? " + query);
 
 
 //                            postsArrayList.add(post);

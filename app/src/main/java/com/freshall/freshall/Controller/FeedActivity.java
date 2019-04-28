@@ -205,7 +205,6 @@ public class FeedActivity extends AppCompatActivity {
             };
         } else {
             // offline mode, restore feed from savedInstanceState
-
         }
 
         searchModule = (SearchView) findViewById(R.id.searchBar);

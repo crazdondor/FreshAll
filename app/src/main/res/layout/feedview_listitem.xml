@@ -10,7 +10,7 @@
         android:layout_width="0dp"
         android:layout_weight=".65"
         android:layout_height="180dp"
-        android:src="@drawable/baseline_person_black_24dp" />
+        android:src="@drawable/ic_cam_lib" />
 
     <android.support.v7.widget.LinearLayoutCompat
         android:id="@+id/text_descriptions"

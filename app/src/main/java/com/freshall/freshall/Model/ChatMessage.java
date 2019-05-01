@@ -14,16 +14,16 @@ public class ChatMessage {
     private String senderID;
     private String fullName;
     private String content;
-    private Timestamp createdAt;
+    private long createdAt;
 
     public ChatMessage() {
         senderID = "senderID";
         fullName = "First Last";
         content = "BLANK CONTENT";
-        createdAt = new Timestamp(System.currentTimeMillis());
+        createdAt = System.currentTimeMillis();
     }
 
-    public ChatMessage(String senderID, String fullName, String content, Timestamp createdAt) {
+    public ChatMessage(String senderID, String fullName, String content, long createdAt) {
         this.senderID = senderID;
         this.fullName = fullName;
         this.content = content;
@@ -42,9 +42,9 @@ public class ChatMessage {
 
     public void setContent(String content) { this.content = content; }
 
-    public Timestamp getCreatedAt() { return createdAt; }
+    public long getCreatedAt() { return createdAt; }
 
-    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+    public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
 
     @Override
     public String toString() {

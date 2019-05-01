@@ -9,10 +9,12 @@ import java.util.UUID;
 public class Post implements Serializable {
 
     private String postID;
+    private String uuid;
     private String sellerID;
     private String title;
     private String description;
-    private User seller;
+    private String seller;
+    private String sellerEmail;
     private String location;
     private String quantity;
     private String quantityType;
@@ -24,11 +26,11 @@ public class Post implements Serializable {
 
     //DVC
     public Post() {
-
+        this.sellerEmail = "user@email.com";
         this.postID = UUID.randomUUID().toString();
         this.title = "title";
         this.description = "description";
-        this.seller = new User();
+        this.seller = "Firstname Lastname";
         this.location = "city, province, country";
         this.quantity = "0";
         this.quantityType = "each";
@@ -130,11 +132,11 @@ public class Post implements Serializable {
         this.expirationDate = expirationDate;
     }
 
-    public void setSeller(User seller) {
+    public void setSeller(String seller) {
         this.seller = seller;
     }
 
-    public User getSeller() {
+    public String getSeller() {
         return seller;
     }
 
@@ -153,4 +155,13 @@ public class Post implements Serializable {
     public void setPostDate(long postDate) {
         this.postDate = postDate;
     }
+
+    public String getSellerEmail() {
+        return sellerEmail;
+    }
+
+    public void setSellerEmail(String sellerEmail) {
+        this.sellerEmail = sellerEmail;
+    }
+
 }

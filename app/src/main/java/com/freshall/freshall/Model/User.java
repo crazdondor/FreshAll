@@ -14,8 +14,8 @@ public class User implements Serializable {
     private String userID;
     private String email;
     private String phone;
-    private ArrayList<Conversation> conversationArrayList;
-
+    private ArrayList<String> conversationIDs;
+    private ArrayList<String> favoriteIDs;
 
     // constructors
     public User() {
@@ -23,6 +23,9 @@ public class User implements Serializable {
         this.userID = "userID";
         this.email = "firstlast@email.com";
         this.phone = "5551231234";
+        conversationIDs = new ArrayList<>();
+        favoriteIDs = new ArrayList<>();
+
     }
 
     public User(String fullName, String userID, String email, String phone) {
@@ -30,6 +33,8 @@ public class User implements Serializable {
         this.userID = userID;
         this.email = email;
         this.phone = phone;
+        conversationIDs = new ArrayList<>();
+        favoriteIDs = new ArrayList<>();
     }
 
 
@@ -49,7 +54,21 @@ public class User implements Serializable {
 
     public void setPhone(String phone) { this.phone = phone; }
 
+    public ArrayList<String> getConversationIDs() {
+        return conversationIDs;
+    }
 
+    public void setConversationIDs(ArrayList<String> conversationIDs) {
+        this.conversationIDs = conversationIDs;
+    }
+
+    public ArrayList<String> getFavoriteIDs() {
+        return favoriteIDs;
+    }
+
+    public void setFavoriteIDs(ArrayList<String> favoriteIDs) {
+        this.favoriteIDs = favoriteIDs;
+    }
 
     @Override
     public String toString() { return "Full Name: " + fullName + " \n UserID: " + userID; }

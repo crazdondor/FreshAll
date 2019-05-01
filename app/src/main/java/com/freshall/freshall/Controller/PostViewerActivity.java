@@ -19,6 +19,7 @@
 
 package com.freshall.freshall.Controller;
 
+import com.freshall.freshall.Model.Conversation;
 import com.freshall.freshall.Model.User;
 import com.freshall.freshall.R;
 import com.freshall.freshall.Model.Post;
@@ -54,16 +55,19 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
+import java.util.UUID;
 
 public class PostViewerActivity extends AppCompatActivity {
 
-    private int EDIT_POST_REQUEST = 4;
+    private final static int EDIT_POST_REQUEST = 4;
+    private final static int SEND_MESSAGE_REQUEST = 2;
     private Intent mFeedIntent;
-    private String mPostID;
+    private String recipientUserID;
     private String mCurrentUserID;
     private Post selectedPost;
-    private User currentUser;
+    private String currentUserName;
 
     /* UI member variables */
 
@@ -73,15 +77,19 @@ public class PostViewerActivity extends AppCompatActivity {
     private TextView locationText;
     private TextView quantityText;
     private TextView sellerText;
-    private FloatingActionButton fab;
+    private FloatingActionButton addFavoriteFab;
+    private FloatingActionButton sendMessageFab;
     private Button markSoldButton;
     private Button deleteButton;
     private ImageView imageView;
 
     /* Firebase member variables */
-    public DatabaseReference mPostReference;
     public FirebaseDatabase mFirebaseDatabase;
+    public DatabaseReference mFavoritesReference;
+    public DatabaseReference mRecipientReference;
     public DatabaseReference mPostDatabaseReference;
+    public DatabaseReference mConversationReference;
+    public DatabaseReference mConversationStorageReference;
     public StorageReference mStorageReference;
     public StorageReference mPhotoReference;
 
@@ -120,17 +128,19 @@ public class PostViewerActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        // get post that was clicked to populate view
         mFeedIntent = getIntent();
-        mPostID = (String) mFeedIntent.getSerializableExtra("mPostID");
-        mCurrentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        mPostReference = FirebaseDatabase.getInstance().getReference().child("posts").child(mPostID);
-        mStorageReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://freshall-5c50e.appspot.com");
-
-        // the next two lines might not be necessary
         selectedPost = (Post) mFeedIntent.getSerializableExtra("selectedPost");
-        currentUser = (User) mFeedIntent.getSerializableExtra("user");
+        currentUserName = (String) mFeedIntent.getSerializableExtra("user");
+        recipientUserID = selectedPost.getSellerID();
+        Log.d("PostViewerActivity", "SellerID" + recipientUserID);
 
+        // get post that was clicked to populate view
+        mCurrentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        mConversationReference = FirebaseDatabase.getInstance().getReference().child("users").child(mCurrentUserID).child("conversationIDs");
+        mRecipientReference = FirebaseDatabase.getInstance().getReference().child("users").child(recipientUserID).child("conversationIDs");
+        mFavoritesReference = FirebaseDatabase.getInstance().getReference().child("users").child(mCurrentUserID).child("favoriteIDs");
+        mConversationStorageReference =  FirebaseDatabase.getInstance().getReference().child("conversations");
+        mStorageReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://freshall-5c50e.appspot.com");
 
         titleText = (TextView) findViewById(R.id.titleText);
         descText = (TextView) findViewById(R.id.description);
@@ -139,47 +149,31 @@ public class PostViewerActivity extends AppCompatActivity {
         quantityText = (TextView) findViewById(R.id.quantity);
         sellerText = (TextView) findViewById(R.id.sellerName);
         imageView = (ImageView) findViewById(R.id.postPhoto);
-        fab = (FloatingActionButton) findViewById(R.id.favorite);
+        sendMessageFab = (FloatingActionButton) findViewById(R.id.sendMessage);
+        addFavoriteFab = (FloatingActionButton) findViewById(R.id.favorite);
         markSoldButton = (Button) findViewById(R.id.postSold);
         deleteButton = (Button) findViewById(R.id.deletePost);
+
+        titleText.setText(selectedPost.getTitle());
+        descText.setText("Description: " + selectedPost.getDescription());
+        priceText.setText("Price: " + selectedPost.getPricePerQuantity().toString());
+        locationText.setText("Location: " + selectedPost.getLocation());
+        quantityText.setText("Quantity: " + selectedPost.getQuantity() + " " + selectedPost.getQuantityType());
+        sellerText.setText(selectedPost.getSeller());
+
+        mPhotoReference = mStorageReference.child("images/posts/" + selectedPost.getPostID() + ".jpg");
+        setImageView(mPhotoReference);
+
+        if(selectedPost.getSellerID() == mCurrentUserID){
+            addFavoriteFab.setImageResource(R.drawable.ic_edit);
+            sendMessageFab.setVisibility(View.INVISIBLE);
+            markSoldButton.setVisibility(View.VISIBLE);
+            deleteButton.setVisibility(View.VISIBLE);
+        }
 
 
         // if user clicked own post, FAB is edit button and mark sold button visible
         // TODO: fix bug where app crashes on cancel edit post
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                Post post = dataSnapshot.getValue(Post.class);
-                titleText.setText(post.getTitle());
-                descText.setText("Description: " + post.getDescription());
-                priceText.setText("Price: " + post.getPricePerQuantity().toString());
-                locationText.setText("Location: " + post.getLocation());
-                quantityText.setText("Quantity: " + post.getQuantity() + " " + selectedPost.getQuantityType());
-                sellerText.setText(post.getSeller().getFullName());
-
-                mPhotoReference = mStorageReference.child("images/posts/" + post.getPostID() + ".jpg");
-                setImageView(mPhotoReference);
-
-                if(post.getSellerID() == mCurrentUserID){
-                    fab.setImageResource(R.drawable.ic_edit);
-                    markSoldButton.setVisibility(View.VISIBLE);
-                    deleteButton.setVisibility(View.VISIBLE);
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w("PostViewerActivity", "loadPost:onCancelled", databaseError.toException());
-            }
-        };
-        mPostReference.addValueEventListener(postListener);
-
-
-
 
         // TODO: fix bug where image must be selected on edit
 
@@ -212,11 +206,11 @@ public class PostViewerActivity extends AppCompatActivity {
 
 
     // when FAB is clicked to add to favorites, shows toast
-    public void fab_clicked(View view) {
+    public void addFavoriteClicked(View view) {
         // if seller selects own post, FAB displays edit button
         // on edit button clicked, send data from post to create_new_post to populate view
-        currentUser = (User) mFeedIntent.getSerializableExtra("user");
-        if (selectedPost.getSeller().getEmail().equals(currentUser.getEmail())) {
+        currentUserName = (String) mFeedIntent.getSerializableExtra("user");
+        if (selectedPost.getSeller().equals(currentUserName)) {
             Intent editPostIntent = new Intent(PostViewerActivity.this, CreateNewPostActivity.class);
             editPostIntent.putExtra("current_post", selectedPost);
             startActivityForResult(editPostIntent, EDIT_POST_REQUEST);
@@ -227,22 +221,64 @@ public class PostViewerActivity extends AppCompatActivity {
         // TODO: create favorites list and add selectedPost to list
         else {
             Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show();
+            mFavoritesReference.child(selectedPost.getPostID()).setValue(selectedPost.getTitle());
         }
     }
 
     public void sendMessageClicked(View view) {
-        // if seller selects own post, FAB displays edit button
-        // on edit button clicked, send data from post to create_new_post to populate view
-        currentUser = (User) mFeedIntent.getSerializableExtra("user");
-        if (selectedPost.getSeller().getEmail().equals(currentUser.getEmail())) {
-            Intent editPostIntent = new Intent(PostViewerActivity.this, CreateNewPostActivity.class);
-            editPostIntent.putExtra("current_post", selectedPost);
-            startActivityForResult(editPostIntent, EDIT_POST_REQUEST);
-        }
+        // add a listener to all of the current users conversations
+        mConversationReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                Intent messagingIntent = new Intent(PostViewerActivity.this, MessagingActivity.class);
+                String conversationID = "";
+                String oldConversationID;
+                Log.d("PostViewerActivity", "directory: " + dataSnapshot.getKey());
+                for (DataSnapshot conversationSnapshot: dataSnapshot.getChildren()) {
 
-        else {
-            Toast.makeText(this, "MessagesActivity opened", Toast.LENGTH_SHORT).show();
-        }
+                    Log.d("PostViewerActivity", "directory: " + conversationSnapshot.toString());
+                    String snapshotID = conversationSnapshot.getValue(String.class);
+
+                    if (snapshotID.equals(recipientUserID)) {
+                        conversationID = conversationSnapshot.getKey();
+                        messagingIntent.putExtra("conversationID", conversationID);
+                        messagingIntent.putExtra("recipientID", recipientUserID);
+                        Log.i("sendMessageFab", "old conversation found");
+                        Log.i("sendMessageFab", "conversation id: " + conversationID);
+
+                    }
+                }
+
+                if(conversationID.equals("")){
+                    Conversation newConversation = new Conversation();
+                    ArrayList<String> memberIDs = new ArrayList<>();
+                    memberIDs.add(recipientUserID);
+                    memberIDs.add(mCurrentUserID);
+                    newConversation.setMemberIDs(memberIDs);
+                    conversationID = newConversation.getConversationID();
+                    mConversationStorageReference.child(conversationID).setValue(newConversation);
+
+                    mConversationReference.child(conversationID).setValue(recipientUserID);
+                    mRecipientReference.child(conversationID).setValue(mCurrentUserID);
+
+                    messagingIntent.putExtra("conversationID", conversationID);
+                    messagingIntent.putExtra("recipientID", recipientUserID);
+                    Log.i("sendMessageFab", "new conversation made");
+                    Log.i("sendMessageFab", "conversation id: " + conversationID);
+
+                }
+
+                startActivity(messagingIntent);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("PostViewerActivity", "loadConversation:onCancelled", databaseError.toException());
+            }
+        });
+
     }
 
     public void DeletePost(Post post) {
@@ -268,7 +304,7 @@ public class PostViewerActivity extends AppCompatActivity {
         if (requestCode == EDIT_POST_REQUEST && resultCode == RESULT_OK) {
             if (data != null) {
                 Post resultPost = (Post) data.getSerializableExtra("new_post");
-                resultPost.setSeller(currentUser);
+                resultPost.setSeller(currentUserName);
                 String uuid = resultPost.getPostID();
                 DeletePost(resultPost);
                 mPostDatabaseReference.child(uuid).setValue(resultPost);

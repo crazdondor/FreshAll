@@ -53,6 +53,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -89,6 +90,14 @@ public class FeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
+        // initialize the firebase references
+        mFirebaseDatabase =
+                FirebaseDatabase.getInstance();
+
+        mPostDatabaseReference =
+                mFirebaseDatabase.getReference()
+                        .child("posts");
+
         // Set up tool bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -103,24 +112,40 @@ public class FeedActivity extends AppCompatActivity {
         MenuItem menuItem = menu.getItem(0);
         menuItem.setChecked(true);
 
+
         // Set up post list
-        setupPostList();
+        noPostsMessage = (TextView) findViewById(R.id.noPostsText);
+        postsListView = (ListView) findViewById(R.id.postsList);
 
-        // initialize the firebase references
-        mFirebaseDatabase =
-                FirebaseDatabase.getInstance();
+        postsArrayList = new ArrayList<Post>();
+        arrayAdapter = new PostsArrayAdapter(this, postsArrayList);
+        postsListView.setAdapter(arrayAdapter);
 
-        mPostDatabaseReference =
-                mFirebaseDatabase.getReference()
-                        .child("posts");
+        // set list item click listener to open post viewer activity
+        postsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Log.i("listview", "listview item clicked");
+                Intent viewPost = new Intent(getApplicationContext(), PostViewerActivity.class);
+
+                // add post that was clicked to intent, then start post viewer activity
+                Post selectedPost = (Post) adapterView.getAdapter().getItem(position);
+
+                viewPost.putExtra("selectedPost", selectedPost);
+                viewPost.putExtra("user", mFirebaseAuth.getCurrentUser().getDisplayName());
+
+                startActivityForResult(viewPost, VIEW_POST_REQUEST);
+            }
+        });
 
         mPostChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 // dataSnapshot stores the Post
+                Log.i("Added child", dataSnapshot.getValue(Post.class).getTitle());
                 Post post = dataSnapshot.getValue(Post.class);
-                // add it to the list, notify adapter
 
+                // add it to the list, notify adapter
                 postsArrayList.add(post);
                 arrayAdapter.notifyDataSetChanged();
             }
@@ -152,6 +177,7 @@ public class FeedActivity extends AppCompatActivity {
             }
         };
 
+        mPostDatabaseReference.addChildEventListener(mPostChildEventListener);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -164,6 +190,16 @@ public class FeedActivity extends AppCompatActivity {
                 } else {
                     setupUserSignedOut();
                     // user is signed out
+                    mPostsQuery.removeEventListener(mPostChildEventListener);
+                    Intent intent = AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setIsSmartLockEnabled(false)
+                            .setAvailableProviders(
+                                    Arrays.asList(
+                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
+                                    )
+                            ).build();
+                    startActivityForResult(intent, SIGN_IN_REQUEST);
                 }
             }
         };
@@ -212,7 +248,7 @@ public class FeedActivity extends AppCompatActivity {
         if (requestCode == NEW_ITEM_REQUEST && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 Post resultPost = (Post) data.getSerializableExtra("new_post");
-                resultPost.setSeller(mUser);
+                resultPost.setSeller(mUser.getFullName());
                 String uuid = resultPost.getPostID();
                 mPostDatabaseReference.child(uuid).setValue(resultPost); // add post to firebase
             }
@@ -242,15 +278,18 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void setupUserSignedIn(FirebaseUser firebaseUser) {
-        Log.i("auth", firebaseUser.getDisplayName());
+        Log.d("auth", firebaseUser.getDisplayName());
+        Log.d("getUid", firebaseUser.getUid());
+        Log.d("getEmail", firebaseUser.getEmail());
 
         this.mUser = new User(firebaseUser.getDisplayName(),
                 firebaseUser.getUid(),
                 firebaseUser.getEmail(),
-                firebaseUser.getPhoneNumber());
-        this.userName = mUser.getFullName();
-        mPostDatabaseReference
-                .addChildEventListener(mPostChildEventListener);
+                "1231231234");
+
+        this.userName = firebaseUser.getDisplayName();
+
+        mPostDatabaseReference.addChildEventListener(mPostChildEventListener);
     }
 
     private void setupUserSignedOut() {
@@ -263,36 +302,6 @@ public class FeedActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void setupPostList() {
-        noPostsMessage = (TextView) findViewById(R.id.noPostsText);
-        postsListView = (ListView) findViewById(R.id.postsList);
-        postsArrayList = new ArrayList<Post>();
-
-        // create array adapter to display title and description of posts
-        arrayAdapter = new PostsArrayAdapter(this, postsArrayList);
-
-        // set array adapter
-        postsListView.setAdapter(arrayAdapter);
-
-        // set list item click listener to open post viewer activity
-        postsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Log.i("listview", "listview item clicked");
-                Intent viewPost = new Intent(getApplicationContext(), PostViewerActivity.class);
-
-                // add post that was clicked to intent, then start post viewer activity
-                Post selectedPost = (Post) adapterView.getAdapter().getItem(position);
-
-                viewPost.putExtra("selectedPost", selectedPost);
-                viewPost.putExtra("user", mFirebaseAuth.getCurrentUser().getDisplayName());
-                viewPost.putExtra("postID", selectedPost.getPostID());
-
-                startActivityForResult(viewPost, VIEW_POST_REQUEST);
-            }
-        });
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

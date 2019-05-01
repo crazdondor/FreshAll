@@ -64,7 +64,7 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
                     if (original != null && original.size() > 0) {
                         for (final Post post : original) {
                             if (post.getTitle().toLowerCase().contains(constraint.toString()) ||
-                                    post.getSeller().getFullName().toLowerCase().contains(constraint.toString()) ||
+                                    post.getSeller().toLowerCase().contains(constraint.toString()) ||
                                     post.getDescription().toLowerCase().contains(constraint.toString())) {
                                 results.add(post);
                             }
@@ -120,7 +120,7 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
         }
         holder.title.setText(postArrayList.get(position).getTitle());
         holder.description.setText(postArrayList.get(position).getDescription());
-        holder.seller.setText((CharSequence) postArrayList.get(position).getSeller().getFullName());
+        holder.seller.setText((CharSequence) postArrayList.get(position).getSeller());
 
         // set Imageview image
         StorageReference storageReference = FirebaseStorage.getInstance()

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.freshall.freshall.Model.ChatMessage;
@@ -12,108 +13,58 @@ import com.freshall.freshall.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
-public class MessagesArrayAdapter extends RecyclerView.Adapter {
-    private static final SimpleDateFormat simpleTimeFormat = new SimpleDateFormat("HH:mm");
-    private static final int VIEW_TYPE_MESSAGE_SENT = 1;
-    private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
+public class MessagesArrayAdapter extends ArrayAdapter<ChatMessage> {
 
     private Context mContext;
     private ArrayList<ChatMessage> mMessageList;
 
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser mFirebaseUser = mAuth.getCurrentUser();
-
-    public MessagesArrayAdapter(Context context, ArrayList<ChatMessage> messageList) {
+    public MessagesArrayAdapter(Context context, ArrayList<ChatMessage> chatMessageList) {
+        super(context,0, chatMessageList);
         mContext = context;
-        mMessageList = messageList;
+        mMessageList = chatMessageList;
     }
 
     @Override
-    public int getItemCount() {
-        return mMessageList.size();
+    public View getView(int position, View convertView, ViewGroup parent) {
+
+        // Get the data item for this position
+        ChatMessage chatMessage = getItem(position);
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm MM/dd/yyyy");
+        Date date = new Date(chatMessage.getCreatedAt());
+
+        // Check if an existing view is being reused, otherwise inflate the view
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_message, parent, false);
+        }
+
+        // Lookup view for data population
+        TextView messageContent, messageSender, messageTime;
+        messageContent = (TextView) convertView.findViewById(R.id.message_content);
+        messageSender = (TextView) convertView.findViewById(R.id.message_sender);
+        messageTime = (TextView) convertView.findViewById(R.id.message_time);
+
+        // Populate the data into the template view using the data object
+        messageContent.setText(chatMessage.getContent());
+        messageSender.setText(chatMessage.getFullName());
+        messageTime.setText(dateFormat.format(date));
+
+        // Return the completed view to render on screen
+        return convertView;
     }
 
-    // Determines the appropriate ViewType according to the sender of the message.
     @Override
-    public int getItemViewType(int position) {
-        ChatMessage message = (ChatMessage) mMessageList.get(position);
-
-        if (message.getSenderID().equals(mFirebaseUser.getUid())) {
-            // If the current user is the sender of the message
-            return VIEW_TYPE_MESSAGE_SENT;
-        } else {
-            // If some other user sent the message
-            return VIEW_TYPE_MESSAGE_RECEIVED;
-        }
+    public void clear() {
+        super.clear();
     }
 
-    // Inflates the appropriate layout according to the ViewType.
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view;
-
-        if (viewType == VIEW_TYPE_MESSAGE_SENT) {
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_message_sent, parent, false);
-            return new SentMessageHolder(view);
-        } else if (viewType == VIEW_TYPE_MESSAGE_RECEIVED) {
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_message_received, parent, false);
-            return new ReceivedMessageHolder(view);
-        }
-
-        return null;
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
     }
 
-    // Passes the message object to a ViewHolder so that the contents can be bound to UI.
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ChatMessage message = (ChatMessage) mMessageList.get(position);
-
-        switch (holder.getItemViewType()) {
-            case VIEW_TYPE_MESSAGE_SENT:
-                ((SentMessageHolder) holder).bind(message);
-                break;
-            case VIEW_TYPE_MESSAGE_RECEIVED:
-                ((ReceivedMessageHolder) holder).bind(message);
-        }
-    }
-
-    private class SentMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText;
-
-        SentMessageHolder(View itemView) {
-            super(itemView);
-            messageText = (TextView) itemView.findViewById(R.id.sent_message_content);
-            timeText = (TextView) itemView.findViewById(R.id.sent_message_time);
-        }
-
-        void bind(ChatMessage message) {
-            messageText.setText(message.getContent());
-            // Format the stored timestamp into a readable String using format constant at top of file.
-            timeText.setText(simpleTimeFormat.format(message.getCreatedAt()));
-        }
-    }
-
-    private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText, nameText;
-
-        ReceivedMessageHolder(View itemView) {
-            super(itemView);
-
-            messageText = (TextView) itemView.findViewById(R.id.received_message_content);
-            timeText = (TextView) itemView.findViewById(R.id.received_message_time);
-            nameText = (TextView) itemView.findViewById(R.id.received_message_sender);
-        }
-
-        void bind(ChatMessage message) {
-            messageText.setText(message.getContent());
-            // Format the stored timestamp using simpleTimeFormat defined above.
-            timeText.setText(simpleTimeFormat.format(message.getCreatedAt()));
-            nameText.setText(message.getFullName());
-        }
-    }
 }

@@ -6,6 +6,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -45,19 +46,23 @@ import java.util.UUID;
 public class CreateNewPostActivity extends AppCompatActivity {
 
     private boolean postHasTitle;
-    private Post selectedPost;
+    private Post post;
     private ImageView postPhotoView;
     private Uri filePath;
     private FusedLocationProviderClient mFusedLocationClient;
     private ProgressDialog progressDialog;
+    private String mCurrentUserID;
 
-    static final int REQUEST_LOCATION = 1;
+    private static final int REQUEST_LOCATION = 1;
     private static final int PICK_IMAGE_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_post);
+
+        // get current user's id to add to post
+        mCurrentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // get view from layout
         postPhotoView = (ImageView) findViewById(R.id.postPhoto);
@@ -78,34 +83,30 @@ public class CreateNewPostActivity extends AppCompatActivity {
 
         // if editing post, populate layout with intent variables and add mark sold button
         Intent editIntent = getIntent();
-        selectedPost = (Post) editIntent.getSerializableExtra("current_post");
+        post = (Post) editIntent.getSerializableExtra("current_post");
 
-        if (selectedPost != null) {
+        if (post != null) {
 
             EditText titleEditor = (EditText) findViewById(R.id.postNameLable);
-            titleEditor.setText(selectedPost.getTitle());
+            titleEditor.setText(post.getTitle());
 
             EditText descriptionEditor = (EditText) findViewById(R.id.description);
-            descriptionEditor.setText(selectedPost.getDescription());
+            descriptionEditor.setText(post.getDescription());
 
             EditText priceEditor = (EditText) findViewById(R.id.price);
-            priceEditor.setText(selectedPost.getPricePerQuantity());
+            priceEditor.setText(post.getPricePerQuantity());
 
             TextView locationEditor = (TextView) findViewById(R.id.locationText);
-            locationEditor.setText(selectedPost.getLocation());
+            locationEditor.setText(post.getLocation());
 
             EditText quantityEditor = (EditText) findViewById(R.id.quantityNumber);
-            quantityEditor.setText(selectedPost.getQuantity());
+            quantityEditor.setText(post.getQuantity());
 
             postPhotoView = (ImageView) findViewById(R.id.postPhoto);
             if (postPhotoView.getDrawable() != null){
-                uploadPhoto(selectedPost);
+                uploadPhoto(post);
             }
 
-            // setSelection takes int value
-            // TODO: figure out how to determine int value from String quantityType in Post obj
-//        Spinner quantityTypeEditor = (Spinner) findViewById(R.id.quantityType);
-//        quantityTypeEditor.setSelection(0);
 
         }
 
@@ -141,6 +142,8 @@ public class CreateNewPostActivity extends AppCompatActivity {
     // when confirm button is clicked, create new post object with entered fields
     public void createPost(View view) {
         Post newPost = new Post();
+
+        newPost.setSellerID(mCurrentUserID);
 
         // if title text exists, add to new post
         EditText titleEditor = (EditText) findViewById(R.id.postNameLable);

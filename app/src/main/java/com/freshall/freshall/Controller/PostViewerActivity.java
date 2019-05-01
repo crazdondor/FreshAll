@@ -154,7 +154,6 @@ public class PostViewerActivity extends AppCompatActivity {
         }
     }
 
-    // when FAB is clicked to add to favorites, shows toast
     public void fab_clicked(View view) {
         // if seller selects own post, FAB displays edit button
         // on edit button clicked, send data from post to create_new_post to populate view

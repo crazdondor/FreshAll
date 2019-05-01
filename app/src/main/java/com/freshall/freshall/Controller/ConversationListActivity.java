@@ -74,6 +74,7 @@ public class ConversationListActivity extends AppCompatActivity {
         mConversationsValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                conversationPreviews.clear();
                 for (DataSnapshot conversationSnapshot : dataSnapshot.getChildren()) {
                     ConversationPreview conversationPreview = conversationSnapshot.getValue(ConversationPreview.class);
                     conversationPreviews.add(conversationPreview);

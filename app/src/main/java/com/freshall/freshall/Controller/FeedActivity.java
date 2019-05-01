@@ -310,6 +310,8 @@ public class FeedActivity extends AppCompatActivity {
                 resultPost.setSellerEmail(user.getEmail());
                 String uuid = resultPost.getPostID();
                 mPostDatabaseReference.child(uuid).setValue(resultPost); // add post to firebase
+                postsArrayList.clear();
+                arrayAdapter.notifyDataSetChanged();
             }
         }
 

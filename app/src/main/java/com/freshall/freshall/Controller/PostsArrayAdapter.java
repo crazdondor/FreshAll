@@ -13,6 +13,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.freshall.freshall.Model.Post;
 import com.freshall.freshall.R;
@@ -27,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Created by bennettfalkenberg on 2/26/19.
+ * Created by bennettfalkenberg and quinbingham on 2/26/19.
  */
 
 public class PostsArrayAdapter extends BaseAdapter implements Filterable{
@@ -63,8 +64,8 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
                     if (original != null && original.size() > 0) {
                         for (final Post post : original) {
                             if (post.getTitle().toLowerCase().contains(constraint.toString()) ||
-                                    post.getSeller().toLowerCase().startsWith(constraint.toString()) ||
-                                    post.getDescription().toLowerCase().startsWith(constraint.toString())) {
+                                    post.getSeller().toLowerCase().contains(constraint.toString()) ||
+                                    post.getDescription().toLowerCase().contains(constraint.toString())) {
                                 results.add(post);
                             }
                         }
@@ -104,7 +105,7 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final  PostHolder holder;
+        final PostHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.feedview_listitem, parent, false);
             holder = new PostHolder();
@@ -121,10 +122,11 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
         holder.description.setText(postArrayList.get(position).getDescription());
         holder.seller.setText((CharSequence) postArrayList.get(position).getSeller());
 
+        // set Imageview image
         StorageReference storageReference = FirebaseStorage.getInstance()
                 .getReferenceFromUrl("gs://freshall-5c50e.appspot.com");
         StorageReference photoRef = storageReference.child("images/posts/"
-                + postArrayList.get(position).getUuid()
+                + postArrayList.get(position).getPostID()
                 + ".jpg");
 
         try {
@@ -133,17 +135,20 @@ public class PostsArrayAdapter extends BaseAdapter implements Filterable{
             photoRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    // Local temp file has been created
                     String filePath = localFile.getPath();
                     Bitmap bitmap = BitmapFactory.decodeFile(filePath);
                     holder.photo.setImageBitmap(bitmap);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
-                public void onFailure(@NonNull Exception e) {
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle errors
                     holder.photo.setImageResource(R.drawable.baseline_add_box_black_24dp);
                 }
             });
-        } catch (IOException io) {
+        }
+        catch (IOException ioe){
 
         }
 

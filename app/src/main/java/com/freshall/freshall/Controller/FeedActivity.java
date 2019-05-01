@@ -1,3 +1,22 @@
+/**
+ * This program is the Controller for the feed screen.
+ * After logging in, the user will see this activity containing:
+ * - a list of items for sale with their photos and titles
+ * - a search bar
+ * - a create-new-post button
+ * If a seller selects their own post, the user will see this activity containing:
+ * - an edit post button
+ * - a delete post button
+ * - a mark-as-sold button
+ *
+ * @sources
+ * How to download images from Firebase Storage: (lines 143-171)
+ * {@link https://firebase.google.com/docs/storage/android/download-files}
+ *
+ * @authors Bennett Falkenberg, Angela Rae, Kevin Bruce, Amy Larson
+ * @version v1.0 3/4/17
+ */
+
 package com.freshall.freshall.Controller;
 
 import com.freshall.freshall.Model.Post;
@@ -109,7 +128,8 @@ public class FeedActivity extends AppCompatActivity {
                     break;
                 case R.id.nav_message:
                     Log.i("navigation", "message button press");
-//                    mTextMessage.setText(R.string.title_notifications);
+                    Intent messageIntent = new Intent(FeedActivity.this, ConversationListActivity.class);
+                    startActivity(messageIntent);
                     break;
                 case R.id.nav_user:
                     Log.i("navigation", "user button press");
@@ -161,7 +181,7 @@ public class FeedActivity extends AppCompatActivity {
                 // add post that was clicked to intent, then start post viewer activity
                 Post selectedPost = (Post) adapterView.getAdapter().getItem(position);
                 viewPost.putExtra("selectedPost", selectedPost);
-                viewPost.putExtra("user", user);
+                viewPost.putExtra("user", user.getFullName());
                 startActivityForResult(viewPost, VIEW_POST_REQUEST);
             }
         });
@@ -288,7 +308,7 @@ public class FeedActivity extends AppCompatActivity {
                 Post resultPost = (Post) data.getSerializableExtra("new_post");
                 resultPost.setSeller(user.getFullName());
                 resultPost.setSellerEmail(user.getEmail());
-                String uuid = resultPost.getUuid();
+                String uuid = resultPost.getPostID();
                 mPostDatabaseReference.child(uuid).setValue(resultPost); // add post to firebase
                 arrayAdapter.notifyDataSetChanged();
             }

@@ -7,7 +7,10 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Post implements Serializable {
+
+    private String postID;
     private String uuid;
+    private String sellerID;
     private String title;
     private String description;
     private String seller;
@@ -23,32 +26,47 @@ public class Post implements Serializable {
 
     //DVC
     public Post() {
-        this.uuid = UUID.randomUUID().toString();
+        this.sellerEmail = "user@email.com";
+        this.postID = UUID.randomUUID().toString();
         this.title = "title";
         this.description = "description";
-        this.seller = "null";
-        this.sellerEmail = "null";
+        this.seller = "Firstname Lastname";
         this.location = "city, province, country";
         this.quantity = "0";
         this.quantityType = "each";
         this.pricePerQuantity = "negotiable";
-        this.harvestDate = new Date(2000, 1, 1);
-        this.expirationDate = new Date(2020, 1, 1);
         this.isSold = false;
     }
 
     //EVC
-    public Post(String title, String description, String location, String quantity, String quantityType, String pricePerQuantity, Date harvestDate, Date expirationDate) {
+    public Post(String title, String description, String location, String quantity, String quantityType, String pricePerQuantity) {
         this.title = title;
         this.description = description;
         this.location = location;
         this.quantity = quantity;
         this.quantityType = quantityType;
+        this.pricePerQuantity = pricePerQuantity;
     }
 
-    public String getUuid() {
-        return uuid;
+    //Getters and Setters
+
+    public String getSellerID() {
+        return sellerID;
     }
+
+    public void setSellerID(String sellerID) {
+        this.sellerID = sellerID;
+    }
+
+    public Boolean getSold() { return isSold; }
+
+    public void setSold(Boolean sold) { isSold = sold; }
+
+    public String getPostID() {
+        return postID;
+    }
+
+    public void setPostID(String postID) { this.postID = postID; }
 
     public String getTitle() {
         return title;
@@ -77,7 +95,6 @@ public class Post implements Serializable {
     public String getQuantity() {
         return quantity;
     }
-
 
     public void setQuantity(String quantity) {
         this.quantity = quantity;
@@ -146,4 +163,5 @@ public class Post implements Serializable {
     public void setSellerEmail(String sellerEmail) {
         this.sellerEmail = sellerEmail;
     }
+
 }

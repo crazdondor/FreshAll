@@ -64,10 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
     ImageView imageView;
     final String TAG = "Profile Activity";
 
-
     static final int REQUEST_IMAGE_CAPTURE = 0;
-//    static final int WRITE_EXTERNAL_REQUEST = 0;
-//    static final int CHOOSE_IMAGE = 101;
 
     Uri uriProfileImage;
 
@@ -79,13 +76,11 @@ public class ProfileActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.nav_home:
                     Log.i("navigation", "home button press");
-//                    mTextMessage.setText(R.string.title_home);
                     Intent homeIntent = new Intent(ProfileActivity.this, FeedActivity.class);
                     startActivity(homeIntent);
                     break;
                 case R.id.nav_message:
                     Log.i("navigation", "message button press");
-//                    mTextMessage.setText(R.string.title_notifications);
                     break;
                 case R.id.nav_user:
                     Log.i("navigation", "user button press");
@@ -103,6 +98,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
+        // Get user from intent that started activity
         Intent feedIntent = getIntent();
         username = (String) feedIntent.getStringExtra("username");
         user = (User) feedIntent.getSerializableExtra("user");
@@ -160,8 +156,6 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
         };
-
-        Toast.makeText(this, "Profile Activity", Toast.LENGTH_SHORT).show();
 
         mPostsQuery.addChildEventListener(mProfileChildEventListener);
 

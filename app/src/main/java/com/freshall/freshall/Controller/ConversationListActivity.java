@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.freshall.freshall.Model.ChatMessage;
 import com.freshall.freshall.Model.Conversation;
+import com.freshall.freshall.Model.ConversationPreview;
 import com.freshall.freshall.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +32,8 @@ import java.util.List;
 
 public class ConversationListActivity extends AppCompatActivity {
 
-    static final int VIEW_CONVERSATION_REQUEST = 1;
-
-
-    private List<Conversation> conversationList;
-    private ArrayAdapter<Conversation> arrayAdapter;
+    private ArrayList<ConversationPreview> conversationPreviews;
+    private ConversationArrayAdapter conversationArrayAdapter;
     private ListView conversationsListView;
 
     // database member variables
@@ -42,7 +41,7 @@ public class ConversationListActivity extends AppCompatActivity {
     public String mCurrentUserID;
     public DatabaseReference mConversationsDatabaseReference;
     public FirebaseAuth mFirebaseAuth;
-    private ChildEventListener mConversationChildEventListener;
+    private ValueEventListener mConversationsValueEventListener;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener;
 
 
@@ -59,78 +58,56 @@ public class ConversationListActivity extends AppCompatActivity {
         mConversationsDatabaseReference = mFirebaseDatabase.getReference()
                 .child("users")
                 .child(mCurrentUserID)
-                .child("conversations");
+                .child("conversationIDs");
 
         // Set up nav bar
         setupNavBar();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation_bar);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-
+        // Set up conversation list
+        conversationPreviews = new ArrayList<>();
         conversationsListView = (ListView) findViewById(R.id.conversation_list);
-        setupConversationList();
+        conversationArrayAdapter = new ConversationArrayAdapter(this, conversationPreviews);
+        conversationsListView.setAdapter(conversationArrayAdapter);
 
-    }
+        mConversationsValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot conversationSnapshot : dataSnapshot.getChildren()) {
+                    ConversationPreview conversationPreview = conversationSnapshot.getValue(ConversationPreview.class);
+                    conversationPreviews.add(conversationPreview);
+                    conversationArrayAdapter.notifyDataSetChanged();
+                }
+            }
 
-    public void setupConversationList(){
-//        conversationList = new ArrayList<>();
-//        arrayAdapter = new ArrayAdapter<>(
-//                this,
-//                android.R.layout.simple_list_item_1,
-//                conversationList
-//        );
-//        conversationsListView.setAdapter(arrayAdapter);
-//
-//        conversationsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//                Log.i("listview", "conversation item clicked");
-//
-//                Intent viewConversation = new Intent(getApplicationContext(), MessagingActivity.class);
-//
-//                // add post that was clicked to intent, then start post viewer activity
-//                Conversation selectedConversation = (Conversation) adapterView.getAdapter().getItem(position);
-//                viewConversation.putExtra("conversationID", selectedConversation.getConversationID());
-//                Integer recipientIDindex = selectedConversation.getMemberIDs().indexOf(mCurrentUserID)+1%2;
-//                Log.d("0 or 1: ", recipientIDindex.toString());
-//                viewConversation.putExtra("recipientID", selectedConversation.getMemberIDs().get(recipientIDindex));
-//                startActivityForResult(viewConversation, VIEW_CONVERSATION_REQUEST);
-//            }
-//        });
-//
-//        mConversationChildEventListener = new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                // dataSnapshot stores the Post
-//                Conversation conversation = dataSnapshot.getValue(Conversation.class);
-//                Log.d("dataSnapshot ", dataSnapshot.toString());
-//
-//                conversationList.add(conversation);
-//                Log.d("ConversationList:  ",conversationList.toString());
-//                arrayAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        };
-//        mConversationsDatabaseReference.addChildEventListener(mConversationChildEventListener);
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        mConversationsDatabaseReference.addValueEventListener(mConversationsValueEventListener);
+
+        // set conversation onClick listener to open messaging activity
+        conversationsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Log.i("ConversationList", "listview item clicked");
+
+                // add post that was clicked to intent, then start post viewer activity
+                ConversationPreview preview = (ConversationPreview) adapterView.getAdapter().getItem(position);
+
+                Intent messagingIntent = new Intent(getApplicationContext(), MessagingActivity.class);
+                messagingIntent.putExtra("conversationID", preview.getConversationID());
+                messagingIntent.putExtra("recipientID", preview.getRecipientID());
+                messagingIntent.putExtra("recipientName", preview.getRecipientName());
+
+                startActivity(messagingIntent);
+            }
+        });
+
+
+
     }
 
     private void setupNavBar(){

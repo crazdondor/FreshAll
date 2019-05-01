@@ -20,6 +20,7 @@
 package com.freshall.freshall.Controller;
 
 import com.freshall.freshall.Model.Conversation;
+import com.freshall.freshall.Model.ConversationPreview;
 import com.freshall.freshall.Model.User;
 import com.freshall.freshall.R;
 import com.freshall.freshall.Model.Post;
@@ -106,7 +107,7 @@ public class PostViewerActivity extends AppCompatActivity {
                     return true;
                 case R.id.nav_message:
                     Log.i("navigation", "message button press");
-                    Intent messagingIntent = new Intent(PostViewerActivity.this, MessagingActivity.class);
+                    Intent messagingIntent = new Intent(PostViewerActivity.this, ConversationListActivity.class);
                     startActivity(messagingIntent);
                     return true;
                 case R.id.nav_user:
@@ -225,7 +226,7 @@ public class PostViewerActivity extends AppCompatActivity {
         }
     }
 
-    public void sendMessageClicked(View view) {
+    public void startConversationClicked(View view) {
         // add a listener to all of the current users conversations
         mConversationReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -233,20 +234,19 @@ public class PostViewerActivity extends AppCompatActivity {
                 // Get Post object and use the values to update the UI
                 Intent messagingIntent = new Intent(PostViewerActivity.this, MessagingActivity.class);
                 String conversationID = "";
-                String oldConversationID;
                 Log.d("PostViewerActivity", "directory: " + dataSnapshot.getKey());
                 for (DataSnapshot conversationSnapshot: dataSnapshot.getChildren()) {
 
                     Log.d("PostViewerActivity", "directory: " + conversationSnapshot.toString());
-                    String snapshotID = conversationSnapshot.getValue(String.class);
+                    ConversationPreview conversationPreview = conversationSnapshot.getValue(ConversationPreview.class);
 
-                    if (snapshotID.equals(recipientUserID)) {
+                    if (conversationPreview.getRecipientID().equals(recipientUserID)) {
                         conversationID = conversationSnapshot.getKey();
                         messagingIntent.putExtra("conversationID", conversationID);
                         messagingIntent.putExtra("recipientID", recipientUserID);
-                        Log.i("sendMessageFab", "old conversation found");
-                        Log.i("sendMessageFab", "conversation id: " + conversationID);
-
+                        messagingIntent.putExtra("recipientName", selectedPost.getSeller());
+                        Log.i("sendMessageFab", "old conversation with "+selectedPost.getSeller());
+                        break;
                     }
                 }
 
@@ -259,17 +259,17 @@ public class PostViewerActivity extends AppCompatActivity {
                     conversationID = newConversation.getConversationID();
                     mConversationStorageReference.child(conversationID).setValue(newConversation);
 
-                    mConversationReference.child(conversationID).setValue(recipientUserID);
-                    mRecipientReference.child(conversationID).setValue(mCurrentUserID);
-
                     messagingIntent.putExtra("conversationID", conversationID);
                     messagingIntent.putExtra("recipientID", recipientUserID);
+                    messagingIntent.putExtra("recipientName", selectedPost.getSeller());
+
                     Log.i("sendMessageFab", "new conversation made");
                     Log.i("sendMessageFab", "conversation id: " + conversationID);
-
                 }
 
                 startActivity(messagingIntent);
+
+
             }
 
             @Override

@@ -63,8 +63,9 @@ public class FeedActivity extends AppCompatActivity {
     static final int VIEW_POST_REQUEST = 10;
 
     //member variables
-    private User mUser;
-    private String userName;
+    private User user;
+    private FirebaseUser mUser;
+    public String userName;
     private TextView noPostsMessage;
     private ListView postsListView;
     private ArrayList<Post> postsArrayList;
@@ -248,7 +249,7 @@ public class FeedActivity extends AppCompatActivity {
         if (requestCode == NEW_ITEM_REQUEST && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 Post resultPost = (Post) data.getSerializableExtra("new_post");
-                resultPost.setSeller(mUser.getFullName());
+                resultPost.setSeller(user.getFullName());
                 String uuid = resultPost.getPostID();
                 mPostDatabaseReference.child(uuid).setValue(resultPost); // add post to firebase
             }
@@ -277,29 +278,18 @@ public class FeedActivity extends AppCompatActivity {
         //setupUserSignedOut();
     }
 
-    private void setupUserSignedIn(FirebaseUser firebaseUser) {
-        Log.d("auth", firebaseUser.getDisplayName());
-        Log.d("getUid", firebaseUser.getUid());
-        Log.d("getEmail", firebaseUser.getEmail());
-
-        this.mUser = new User(firebaseUser.getDisplayName(),
-                firebaseUser.getUid(),
-                firebaseUser.getEmail(),
-                "1231231234");
-
-        this.userName = firebaseUser.getDisplayName();
-
-        mPostDatabaseReference.addChildEventListener(mPostChildEventListener);
+    private void setupUserSignedIn(FirebaseUser user) {
+        Log.i("auth", user.getDisplayName());
+//        userName = user.getDisplayName(); // get the user's name
+        this.user = new User(user.getDisplayName(), user.getUid(), user.getEmail(), user.getPhoneNumber());
+        this.userName = this.user.getFullName();
+        mPostsQuery
+                .addChildEventListener(mPostChildEventListener);
     }
 
     private void setupUserSignedOut() {
-        postsArrayList.clear();
-        arrayAdapter.notifyDataSetChanged();
-        mPostDatabaseReference.removeEventListener(mPostChildEventListener);
-        mFirebaseAuth.signOut();
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        userName = "Anonymous";
+        mPostsQuery.removeEventListener(mPostChildEventListener);
     }
 
 

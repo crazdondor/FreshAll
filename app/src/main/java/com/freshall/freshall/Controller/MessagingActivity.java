@@ -1,26 +1,21 @@
 package com.freshall.freshall.Controller;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.freshall.freshall.Model.ChatMessage;
+import com.freshall.freshall.Model.ConversationPreview;
 import com.freshall.freshall.R;
 
-//import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,27 +24,27 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class MessagingActivity extends AppCompatActivity {
 
     private String conversationID;
     private String recipientID;
+    private String recipientName;
     private String mCurrentUserID;
-    private ArrayList<ChatMessage> chatMessageList;
-    private ListAdapter messagesArrayAdapter;
+    private ArrayList<ChatMessage> chatMessageList = new ArrayList<>();
+    private MessagesArrayAdapter messagesArrayAdapter;
     private ListView messageListView;
 
     // firebase fields
     public FirebaseDatabase mFirebaseDatabase;
-    public DatabaseReference mConversationDatabaseReference;
+    public DatabaseReference mConversationStorageReference;
     public DatabaseReference mMessagesDatabaseReference;
+    public DatabaseReference mSenderReference;
+    public DatabaseReference mRecipientReference;
     public FirebaseAuth mFirebaseAuth;
     public FirebaseUser mFirebaseUser;
-    public ValueEventListener mMessagesChildEventListener;
+    public ValueEventListener mMessagesValueEventListener;
 
 
     @Override
@@ -60,39 +55,44 @@ public class MessagingActivity extends AppCompatActivity {
         Intent messagingIntent = getIntent();
         conversationID = messagingIntent.getStringExtra("conversationID");
         recipientID = messagingIntent.getStringExtra("recipientID");
-
+        recipientName = messagingIntent.getStringExtra("recipientName");
 
         // initialize the firebase references
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mCurrentUserID = mFirebaseUser.getUid();
-        mConversationDatabaseReference = mFirebaseDatabase.getReference()
+        mSenderReference = mFirebaseDatabase.getReference()
+                .child("users").child(mCurrentUserID)
+                .child("conversationIDs").child(conversationID);
+        mRecipientReference = mFirebaseDatabase.getReference()
+                .child("users").child(recipientID)
+                .child("conversationIDs").child(conversationID);
+        mConversationStorageReference = mFirebaseDatabase.getReference()
                 .child("conversations").child(conversationID);
-        mMessagesDatabaseReference = mConversationDatabaseReference.child("messages");
+        mMessagesDatabaseReference = mConversationStorageReference.child("messages");
 
         // initialize List and Adapter
-        chatMessageList = new ArrayList<>();
         messageListView = (ListView) findViewById(R.id.message_listview);
         messagesArrayAdapter = new MessagesArrayAdapter(this, chatMessageList);
+        messageListView.setAdapter(messagesArrayAdapter);
 
         // populate chatMessageList
-        mMessagesChildEventListener = new ValueEventListener() {
+        mMessagesValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
                     ChatMessage chatMessage = messageSnapshot.getValue(ChatMessage.class);
                     chatMessageList.add(chatMessage);
+                    messagesArrayAdapter.notifyDataSetChanged();
                 }
-                messageListView.setAdapter(messagesArrayAdapter);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         };
-        mMessagesDatabaseReference.addValueEventListener(mMessagesChildEventListener);
+        mMessagesDatabaseReference.addValueEventListener(mMessagesValueEventListener);
 
     }
 
@@ -106,22 +106,25 @@ public class MessagingActivity extends AppCompatActivity {
         } else {
             // get timestamp
             long messageCreatedAt = System.currentTimeMillis();
-            // create new message object
             ChatMessage chatMessage = new ChatMessage(mCurrentUserID,
                     mFirebaseUser.getDisplayName(),
                     messageContent,
                     messageCreatedAt);
-            chatMessageList.add(chatMessage);
-            mMessagesDatabaseReference.push().setValue(chatMessage);
 
-            Log.d("MessagingActivity", "mConversationDatabaseReference: " + mConversationDatabaseReference.toString());
-
+            Log.d("MessagingActivity", "database ref: " + mConversationStorageReference.toString());
             editText.setText("");
-            mConversationDatabaseReference.child("lastMessageTimestamp").setValue(messageCreatedAt);
-            mConversationDatabaseReference.child("lastMessageText").setValue(messageContent);
+
+            ConversationPreview senderPreview = new ConversationPreview(messageContent,
+                    messageCreatedAt, recipientName, recipientID, conversationID);
+            ConversationPreview recipientPreview = new ConversationPreview(messageContent,
+                    messageCreatedAt, mFirebaseUser.getDisplayName(), mCurrentUserID, conversationID);
+
+
+            mMessagesDatabaseReference.push().setValue(chatMessage);
+            mSenderReference.setValue(senderPreview);
+            mRecipientReference.setValue(recipientPreview);
+            mConversationStorageReference.child("lastMessageTimestamp").setValue(messageCreatedAt);
+            mConversationStorageReference.child("lastMessageText").setValue(messageContent);
         }
     }
-
-
-
 }
